@@ -60,9 +60,9 @@ Mesh::Mesh( std::string fileName, Time& runTime )
         }
     }
 
-    ni_=(ni/parallelCom::ni()+settings::m());
-    nj_=(nj/parallelCom::nj()+settings::m());
-    nk_=(nk/parallelCom::nk()+settings::m());
+    ni_=((ni+parallelCom::ni())/parallelCom::ni()+settings::m());
+    nj_=((nj+parallelCom::nj())/parallelCom::nj()+settings::m());
+    nk_=((nk+parallelCom::nk())/parallelCom::nk()+settings::m());
     dx_=(lx/parallelCom::ni()/(ni/parallelCom::ni()-1));
     dy_=(ly/parallelCom::nj()/(nj/parallelCom::nj()-1));
     dz_=(lz/parallelCom::nk()/(nk/parallelCom::nk()-1));
