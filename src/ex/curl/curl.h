@@ -16,52 +16,30 @@
     Author: Alex Skillen. alex.skillen@manchester.ac.uk
 
 */
-#ifndef FDCLAPLACIAN_H
-#define FDCLAPLACIAN_H
+#ifndef EXPCURL_H
+#define EXPCURL_H
 
-#if defined(_OPENMP)
-#include <omp.h>
-#endif
+
+#include<memory>
+
+#include "Types/vector/vector.h"
+#include "Types/tensor/tensor.h"
 
 #include "Field/Field.h"
-#include "Types/vector/vector.h"
+#include "explicit/grad/grad.h"
 
 
-namespace fdc
+namespace ex
 {
 
-template <class T>
-std::shared_ptr<Field<T> > laplacian
+std::shared_ptr<Field<vector> > curl
 (
-    const Field<T>&
+    const Field<vector>&
 );
-
-
-template<class T>
-std::shared_ptr<Field<T> > laplacian
-(
-    const Field<scalar>&,
-    const Field<T>&
-);
-
-template<class T>
-std::shared_ptr<Field<T> > laplacian
-(
-    const scalar&,
-    const Field<T>&
-);
-
-template<class T>
-std::shared_ptr<Field<T> > laplacian
-(
-    const scalar&,
-    const std::shared_ptr<Field<T> >
-);
-
 
 
 }
 
-#include "fdc/laplacian/laplacian.hxx"
+#include "ex/curl/curl.hxx"
 
 #endif

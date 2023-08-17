@@ -17,9 +17,9 @@
 
 */
 
-#include "fdc/grad/grad.h"
+#include "ex/grad/grad.h"
 
-namespace fdc
+namespace ex
 {
 
 std::shared_ptr<Field<vector> > grad

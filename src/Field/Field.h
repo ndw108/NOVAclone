@@ -28,7 +28,6 @@
 #include "Types/vector/vector.h"
 #include "Types/scalar/scalar.h"
 #include "Types/tensor/tensor.h"
-#include "fdc/grad/grad.h"
 
 #include <fstream>
 #include <iostream>

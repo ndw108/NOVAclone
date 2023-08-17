@@ -16,8 +16,8 @@
     Author: Alex Skillen. alex.skillen@manchester.ac.uk
 
 */
-#ifndef FDCGRAD_H
-#define FDCGRAD_H
+#ifndef EXPGRAD_H
+#define EXPGRAD_H
 
 #if defined(_OPENMP)
 #include <omp.h>
@@ -31,7 +31,7 @@
 #include "Types/tensor/tensor.h"
 #include "Field/Field.h"
 
-namespace fdc
+namespace ex
 {
 
 std::shared_ptr<Field<vector> > grad

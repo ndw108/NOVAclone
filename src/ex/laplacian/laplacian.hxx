@@ -17,7 +17,7 @@
 
 */
 #include <math.h>
-namespace fdc
+namespace ex
 {
 
 template <class T>
@@ -197,7 +197,7 @@ std::shared_ptr<Field<T> > laplacian
     const std::shared_ptr<Field<T> > f
 )
 {
-    return fdc::laplacian( s, (*f) );
+    return ex::laplacian( s, (*f) );
 }
 
 }

@@ -16,8 +16,8 @@
     Author: Alex Skillen. alex.skillen@manchester.ac.uk
 
 */
-#ifndef FDCDIV_H
-#define FDCDIV_H
+#ifndef EXPDIV_H
+#define EXPDIV_H
 
 #if defined(_OPENMP)
 #include <omp.h>
@@ -33,7 +33,7 @@
 #include "Field/Field.h"
 #include "reuseTmp/reuseTmp.h"
 
-namespace fdc
+namespace ex
 {
 
 std::shared_ptr<Field<scalar> > div
@@ -88,6 +88,6 @@ std::shared_ptr<Field<vector> > div
 
 }
 
-#include "fdc/div/div.hxx"
+#include "ex/div/div.hxx"
 
 #endif

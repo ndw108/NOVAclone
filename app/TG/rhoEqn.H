@@ -16,7 +16,7 @@
         *drho =
         time.dt() *
         (
-           -fdc::div( rho*U )
+           -ex::div( rho*U )
         );
 
         //drho->correctBoundaryConditions();

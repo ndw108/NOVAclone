@@ -16,7 +16,7 @@
     Author: Alex Skillen. alex.skillen@manchester.ac.uk
 
 */
-namespace fdc
+namespace ex
 {
 
 std::shared_ptr<Field<vector> > curl
@@ -30,7 +30,7 @@ std::shared_ptr<Field<vector> > curl
     reuseTmp<tensor> gradt( fld.mesh() );
     std::shared_ptr<Field<tensor> > grad( gradt() );
 
-    (*grad) = fdc::grad( fld );
+    (*grad) = ex::grad( fld );
 
     for( int i=settings::m()/2; i<fld.ni()-settings::m()/2; i++ )
     {

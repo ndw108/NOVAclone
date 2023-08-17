@@ -16,9 +16,9 @@
         *drhoU =
         time.dt() *
         (
-           -fdc::div( rho*U, U )
-           -fdc::grad( p )
-           +fdc::laplacian( mu, U ) 
+           -ex::div( rho*U, U )
+           -ex::grad( p )
+           +ex::laplacian( mu, U ) 
         );
 
         *rhoUc = rhoUc+RK4[rk]*drhoU;

@@ -1,9 +1,9 @@
 #include "Field/Field.h"
 #include <iostream>
 #include "Types/vector/vector.h"
-#include "fdc/grad/grad.h"
-#include "fdc/div/div.h"
-#include "fdc/laplacian/laplacian.h"
+#include "ex/grad/grad.h"
+#include "ex/div/div.h"
+#include "ex/laplacian/laplacian.h"
 #include "Time/Time.h"
 #include "parallelCom/parallelCom.h"
 #include "settings/settings.h"

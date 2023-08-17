@@ -16,7 +16,7 @@
     Author: Alex Skillen. alex.skillen@manchester.ac.uk
 
 */
-namespace fdc
+namespace ex
 {
 
 std::shared_ptr<Field<scalar> > div
@@ -289,7 +289,7 @@ std::shared_ptr<Field<vector> > div
     const std::shared_ptr<Field<symmTensor> > fld 
 )
 {
-    return fdc::div( (*fld) );
+    return ex::div( (*fld) );
 }
 
 
@@ -298,7 +298,7 @@ std::shared_ptr<Field<vector> > div
     const std::shared_ptr<Field<tensor> > fld 
 )
 {
-    return fdc::div( (*fld) );
+    return ex::div( (*fld) );
 }
 
 std::shared_ptr<Field<scalar> > div
@@ -306,7 +306,7 @@ std::shared_ptr<Field<scalar> > div
     const std::shared_ptr<Field<vector> > fld
 )
 {
-    return std::shared_ptr<Field<scalar> >( fdc::div( (*fld) ) );
+    return std::shared_ptr<Field<scalar> >( ex::div( (*fld) ) );
 }
 
 template <class T>
@@ -316,7 +316,7 @@ std::shared_ptr<Field<T> > div
     const std::shared_ptr<Field<T> > fld2
 )
 {
-    return std::shared_ptr<Field<T> >( fdc::div( (*fld1), (*fld2) ) );
+    return std::shared_ptr<Field<T> >( ex::div( (*fld1), (*fld2) ) );
 }
 
 
@@ -327,7 +327,7 @@ std::shared_ptr<Field<T> > div
     const Field<T>& fld2
 )
 {
-    return std::shared_ptr<Field<T> >( fdc::div( (*fld1), fld2 ) );
+    return std::shared_ptr<Field<T> >( ex::div( (*fld1), fld2 ) );
 }
 
 
