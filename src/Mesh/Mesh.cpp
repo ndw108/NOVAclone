@@ -60,16 +60,61 @@ Mesh::Mesh( std::string fileName, Time& runTime )
         }
     }
 
-    ni_=((ni+parallelCom::ni())/parallelCom::ni()+settings::m());
-    nj_=((nj+parallelCom::nj())/parallelCom::nj()+settings::m());
-    nk_=((nk+parallelCom::nk())/parallelCom::nk()+settings::m());
-    dx_=(lx/parallelCom::ni()/(ni/parallelCom::ni()-1));
-    dy_=(ly/parallelCom::nj()/(nj/parallelCom::nj()-1));
-    dz_=(lz/parallelCom::nk()/(nk/parallelCom::nk()-1));
+    ni_= (parallelCom::ni() > 1 ) ? ni/parallelCom::ni() + 1 : ni; 
+    nj_= (parallelCom::nj() > 1 ) ? nj/parallelCom::nj() + 1 : nj; 
+    nk_= (parallelCom::nk() > 1 ) ? nk/parallelCom::nk() + 1 : nk; 
+
+    dx_=lx/(ni-1);
+    dy_=ly/(nj-1);
+    dz_=lz/(nk-1);
+
     lx_=lx;
     ly_=ly;
     lz_=lz;
-    origin_ = vector(lx/parallelCom::ni()*parallelCom::i()+ox, ly/parallelCom::nj()*parallelCom::j()+oy, lz/parallelCom::nk()*parallelCom::k()+oz );
+    
+    if( (parallelCom::i() == parallelCom::ni()-1) && parallelCom::ni()>1 )
+    {
+        ni_ = ni - (ni_-1)*(parallelCom::ni()-1);
+    }
+    if( (parallelCom::j() == parallelCom::nj()-1) && parallelCom::nj()>1 )
+    {
+        nj_ = nj - (nj_-1)*(parallelCom::nj()-1);
+    }
+    if( (parallelCom::k() == parallelCom::nk()-1) && parallelCom::nk()>1 )
+    {
+        nk_ = nk - (nk_-1)*(parallelCom::nk()-1);
+    }
+
+    origin_ = vector( ni_*dx_*parallelCom::i()+ox, nj_*dy_*parallelCom::j()+oy, nk_*dz_*parallelCom::k()+oz );
+
+    int ni_copy = ni_;
+    int nj_copy = nj_;
+    int nk_copy = nk_;
+    reduce( ni_copy, minOp<int>() );
+    reduce( nj_copy, minOp<int>() );
+    reduce( nk_copy, minOp<int>() );
+
+    if( parallelCom::master() )
+    {
+        std::cout << "Minimum number of cells per direction " << ni_copy << " " << nj_copy << " " << nk_copy << "." << std::endl;
+    }
+
+    ni_copy = ni_;
+    nj_copy = nj_;
+    nk_copy = nk_;
+    reduce( ni_copy, maxOp<int>() );
+    reduce( nj_copy, maxOp<int>() );
+    reduce( nk_copy, maxOp<int>() );
+
+    if( parallelCom::master() )
+    {
+        std::cout << "Maximum number of cells per direction " << ni_copy << " " << nj_copy << " " << nk_copy << "." << std::endl;
+    }
+
+    ni_+= settings::m();
+    nj_+= settings::m();
+    nk_+= settings::m();
+    
     s1_=s1;
     s2_=s2;
 
