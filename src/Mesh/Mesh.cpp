@@ -71,7 +71,10 @@ Mesh::Mesh( std::string fileName, Time& runTime )
     lx_=lx;
     ly_=ly;
     lz_=lz;
-    
+
+
+    origin_ = vector( (ni_-1)*dx_*parallelCom::i()+ox, (nj_-1)*dy_*parallelCom::j()+oy, (nk_-1)*dz_*parallelCom::k()+oz );
+
     if( (parallelCom::i() == parallelCom::ni()-1) && parallelCom::ni()>1 )
     {
         ni_ = ni - (ni_-1)*(parallelCom::ni()-1);
@@ -84,8 +87,6 @@ Mesh::Mesh( std::string fileName, Time& runTime )
     {
         nk_ = nk - (nk_-1)*(parallelCom::nk()-1);
     }
-
-    origin_ = vector( ni_*dx_*parallelCom::i()+ox, nj_*dy_*parallelCom::j()+oy, nk_*dz_*parallelCom::k()+oz );
 
     int ni_copy = ni_;
     int nj_copy = nj_;
