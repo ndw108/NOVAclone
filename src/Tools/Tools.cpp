@@ -37,4 +37,25 @@ void CFL( const Field<vector>& U, const Mesh& mesh )
     }
 }
 
+void tdma( std::vector<scalar>& a, std::vector<scalar>& b, std::vector<scalar>& c, std::vector<scalar>& d, std::vector<scalar>& x )
+{
+    std::vector<scalar> cp, dp;
+    cp.resize( a.size() );
+    dp.resize( a.size() );
+
+    cp[0] = c[0]/b[0];
+    dp[0] = d[0]/b[0];
+    for( int i=1; i<a.size(); i++ )
+    {
+        cp[i] = c[i]/(b[i]-a[i]*cp[i-1]);
+        dp[i] = (d[i] - a[i]*dp[i-1])/(b[i]-a[i]*cp[i-1]);
+    }
+
+    x[x.size()-1] = dp[x.size()-1];
+    for( int i=x.size()-2; i>=0; i-- )
+    {
+        x[i] = dp[i] - cp[i]*x[i+1];
+    }
+}
+
 }

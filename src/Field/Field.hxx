@@ -102,7 +102,7 @@ Field<T>( m, file )
 template <class T>
 Field<T>::Field
 ( 
-    const Field<T>& fld
+    Field<T>& fld
 )
 :
 Field<T>( fld.m_, fld.file_ )
@@ -124,11 +124,12 @@ Field<T>( fld.m_, fld.file_ )
 template <class T>
 Field<T>::Field
 ( 
-    const std::shared_ptr<Field<T> >& tf
+    std::shared_ptr<Field<T> > tf
 )
 :
-Field<T>( (*tf) )
+m_(tf->mesh())
 {
+    *this = (*tf);
 }
 
 

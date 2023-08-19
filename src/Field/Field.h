@@ -71,8 +71,8 @@ class Field
     //constructors
     Field( Mesh&, std::string );
     Field( Mesh&, const T&, std::string );
-    Field( const Field<T>& );
-    Field( const std::shared_ptr<Field<T> >& );
+    Field( Field<T>& );
+    Field( std::shared_ptr<Field<T> > );
     Field( Mesh& );
     Field( Mesh&, const T& );
 

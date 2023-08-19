@@ -33,6 +33,7 @@ inline scalar& component( scalar& d, const int dir )
     return d;
 }
 
+
 #ifdef HAVE_MPI
 BOOST_IS_MPI_DATATYPE( scalar );
 #endif
