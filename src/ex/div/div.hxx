@@ -43,7 +43,7 @@ std::shared_ptr<Field<scalar> > div
                            
                 scalar* dptr = &divfld->operator()(i,j,0); 
 
-                for( int k=0; k<fld.nk(); k++ )
+                for( int k=settings::m()/2; k<fld.nk()-settings::m()/2; k++ )
                 { 
                     Vp[k] = fld(i, j+1+l, k).y(); 
                     Vm[k] = fld(i, j-1-l, k).y();
@@ -107,7 +107,7 @@ std::shared_ptr<Field<T> > div
             
                 T* dptr = &divfld->operator()(i,j,0);
 
-                for( int k=0; k<fld1.nk(); k++ )
+                for( int k=settings::m()/2; k<fld1.nk()-settings::m()/2; k++ )
                 { 
                     Vp[k] = fld1(i, j+1+l, k).y(); 
                     Vm[k] = fld1(i, j-1-l, k).y();

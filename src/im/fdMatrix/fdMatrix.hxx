@@ -95,7 +95,7 @@ void fdMatrix<T>::solve(scalar tol, int maxIts)
             {
                 for( int j=0; j<this->nj(); j++ )
                 {
-                    bool boundary( j<settings::m()/2 || j>=this->nj()-settings::m()/2 );
+                    bool boundary( j<settings::m()/2 || j>=this->nj()-settings::m()/2-1 );
 
                     a[j] = boundary ? 0.0 : this->al(1)(i,j,k);
                     b[j] = boundary ? 1.0 : this->ap()(i,j,k);
@@ -130,7 +130,7 @@ void fdMatrix<T>::solve(scalar tol, int maxIts)
             {
                 for( int i=0; i<this->ni(); i++ )
                 {
-                    bool boundary( i<settings::m()/2 || i>=this->ni()-settings::m()/2 );
+                    bool boundary( i<settings::m()/2 || i>=this->ni()-settings::m()/2-1 );
 
                     a[i] = boundary ? T(0.0) : this->al(3)(i,j,k);
                     b[i] = boundary ? T(1.0) : this->ap()(i,j,k);
@@ -165,7 +165,7 @@ void fdMatrix<T>::solve(scalar tol, int maxIts)
             {
                 for( int k=0; k<this->nk(); k++ )
                 {
-                    bool boundary( k<settings::m()/2 || k>=this->nk()-settings::m()/2 );
+                    bool boundary( k<settings::m()/2 || k>=this->nk()-settings::m()/2-1 );
 
                     a[k] = boundary ? 0.0 : this->al(5)(i,j,k);
                     b[k] = boundary ? 1.0 : this->ap()(i,j,k);
@@ -277,11 +277,15 @@ T fdMatrix<T>::residual()
         }
     }
 
+    int n = (this->ni()-settings::m())*(this->nj()-settings::m())*(this->nk()-settings::m());
+    all_reduce( res, plusOp<T>() );
+    all_reduce( n, plusOp<int>() );
+
     for( int c=0; c< pTraits<T>::nComp; c++ )
     {
-        component(res,c) = pow( component(res,c)/( (this->ni()-settings::m())*(this->nj()-settings::m())*(this->nk()-settings::m()) ), 0.5 );
+        component(res,c) = pow( component(res,c)/( n ), 0.5 );
     }
-    
+
     return res;
 }
 

@@ -311,15 +311,6 @@ void Field<T>::correctBoundaryConditions()
 {
     this->updateMUI();
 
-    for( int d=0; d<6*pTraits<T>::nComp; d++ )
-    {
-        if( bc_[d] && dynamic_cast<mpiBC<T>*>( bc_[d].get() ) != NULL )
-        {
-            bc_[d]->initUpdate(this);
-        }
-    }
-
-
     //all non mpi/mui BCs first
     for( int d=0; d<6*pTraits<T>::nComp; d++ )
     {
@@ -329,12 +320,71 @@ void Field<T>::correctBoundaryConditions()
         }
     }
 
+    for( int d=0; d<6*pTraits<T>::nComp; d++ )
+    {
+        if(bc_[d]->dir() == east || bc_[d]->dir() == west )
+        {
+            if( bc_[d] && dynamic_cast<mpiBC<T>*>( bc_[d].get() ) != NULL )
+            {
+                bc_[d]->initUpdate(this);
+            }
+        }
+    }
 
     for( int d=0; d<6*pTraits<T>::nComp; d++ )
     {
-        if( bc_[d] && dynamic_cast<mpiBC<T>*>( bc_[d].get() ) != NULL )
+        if(bc_[d]->dir() == east || bc_[d]->dir() == west )
         {
-            bc_[d]->update(this);
+            if( bc_[d] && dynamic_cast<mpiBC<T>*>( bc_[d].get() ) != NULL )
+            {
+                bc_[d]->update(this);
+            }
+        }
+    }
+
+
+    for( int d=0; d<6*pTraits<T>::nComp; d++ )
+    {
+        if(bc_[d]->dir() == north || bc_[d]->dir() == south )
+        {
+            if( bc_[d] && dynamic_cast<mpiBC<T>*>( bc_[d].get() ) != NULL )
+            {
+                bc_[d]->initUpdate(this);
+            }
+        }
+    }
+
+    for( int d=0; d<6*pTraits<T>::nComp; d++ )
+    {
+        if(bc_[d]->dir() == south || bc_[d]->dir() == north )
+        {
+            if( bc_[d] && dynamic_cast<mpiBC<T>*>( bc_[d].get() ) != NULL )
+            {
+                bc_[d]->update(this);
+            }
+        }
+    }
+
+
+    for( int d=0; d<6*pTraits<T>::nComp; d++ )
+    {
+        if(bc_[d]->dir() == top || bc_[d]->dir() == bottom )
+        {
+            if( bc_[d] && dynamic_cast<mpiBC<T>*>( bc_[d].get() ) != NULL )
+            {
+                bc_[d]->initUpdate(this);
+            }
+        }
+    }
+
+    for( int d=0; d<6*pTraits<T>::nComp; d++ )
+    {
+        if(bc_[d]->dir() == top || bc_[d]->dir() == bottom )
+        {
+            if( bc_[d] && dynamic_cast<mpiBC<T>*>( bc_[d].get() ) != NULL )
+            {
+                bc_[d]->update(this);
+            }
         }
     }
 

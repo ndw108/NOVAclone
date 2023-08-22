@@ -56,6 +56,7 @@ int main(int argc, char* argv[])
     U.correctBoundaryConditions();
     p.correctBoundaryConditions();
 
+
     scalar RK4[4] = {1.0/6.0, 1.0/3.0, 1.0/3.0, 1.0/6.0 };
 
     std::ofstream data( settings::zoneName()+"/"+"dat.dat");
@@ -69,9 +70,9 @@ int main(int argc, char* argv[])
 
         time++;
 
-        #include "pEqn.H"
         #include "UEqn.H" 
-        
+        #include "pEqn.H"
+       
         mesh.write(settings::zoneName()+"/data");
         U.write(settings::zoneName()+"/data", "U");
         p.write(settings::zoneName()+"/data", "p"); 
