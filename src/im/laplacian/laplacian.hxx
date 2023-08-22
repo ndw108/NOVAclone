@@ -51,8 +51,8 @@ std::shared_ptr<fdMatrix<T> > laplacian
     } 
 
     //apply deferred correction
-    //std::shared_ptr<Field<T> > hoa = ex::laplacian( mu, fld );
-    //matrix->deferredCorrection( hoa );
+    std::shared_ptr<Field<T> > hoa = ex::laplacian( mu, fld );
+    matrix->deferredCorrection( hoa );
 
     return matrix;
 }

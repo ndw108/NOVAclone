@@ -3,7 +3,7 @@
 
     m->relax(0.1);
 
-    m->solve( 1e-15, 50 );
+    m->solve( 1e-10, 50 );
 
     U -= time.dt() * ex::grad(p);
     U.correctBoundaryConditions();
