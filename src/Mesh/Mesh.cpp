@@ -60,6 +60,10 @@ Mesh::Mesh( std::string fileName, Time& runTime )
         }
     }
 
+    glob_ni_=ni;
+    glob_nj_=nj;
+    glob_nk_=nk;
+
     ni_= (parallelCom::ni() > 1 ) ? ni/parallelCom::ni() + 1 : ni; 
     nj_= (parallelCom::nj() > 1 ) ? nj/parallelCom::nj() + 1 : nj; 
     nk_= (parallelCom::nk() > 1 ) ? nk/parallelCom::nk() + 1 : nk; 

@@ -19,6 +19,7 @@ if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/findFFTW")
 set(LIBS)
 
 set(CMAKE_CXX_STANDARD 20) # C++20...
@@ -31,9 +32,12 @@ set(Boost_USE_STATIC_RUNTIME OFF)
 find_package(Boost 1.61 COMPONENTS mpi timer system) 
 
 
+
 include_directories(${Boost_INCLUDE_DIRS}) 
 
 option(USE_MPI "Use MPI" ON)
+option(USE_OMP "Use OpenMP" OFF)
+option(USE_FFTW "Use FFTW" ON)
 
 ###mpi
 if(USE_MPI)
@@ -54,7 +58,17 @@ if(USE_MUI)
 endif()
 
 ###openmp
-find_package( OpenMP)
+if(USE_OMP)
+  find_package(OpenMP)
+  message(SEND_ERROR "OMP not yet supported / experimental.")
+endif()
+
+if(USE_FFTW)
+  find_package(FFTW REQUIRED)
+  add_definitions(-DHAVE_MPI) 
+  include_directories(${FFTW_INCLUDE_DIRS})
+  set(LIBS ${LIBS} "${FFTW_LIBRARIES}")
+endif()
 
 option(PROFILE "Use gperftools" OFF)
 if(PROFILE)

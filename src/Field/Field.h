@@ -326,6 +326,17 @@ std::shared_ptr<Field<scalar> > operator&&
     std::shared_ptr<Field<tensor> >
 );
 
+std::shared_ptr<Field<scalar> > sqrt
+(
+    std::shared_ptr<Field<scalar> >
+);
+
+std::shared_ptr<Field<scalar> > sqrt
+(
+    Field<scalar>&
+);
+
+
 
 template <class T1, class T2>
 std::shared_ptr<Field<typename innerProductType<T1, T2>::type> > operator&

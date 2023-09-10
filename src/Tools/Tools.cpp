@@ -3,6 +3,9 @@
 namespace tools
 {
 
+const scalar pi = std::numbers::pi;
+const scalar eps = 1.0e-16;
+
 void CFL( const Field<vector>& U, const Mesh& mesh )
 {
     scalar cfl_x = 0.0;

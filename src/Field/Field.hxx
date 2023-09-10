@@ -16,6 +16,7 @@
     Author: Alex Skillen. alex.skillen@manchester.ac.uk
 
 */
+#include <cmath>
 #include <iterator>
 template <class T>
 Field<T>::Field
@@ -1049,6 +1050,16 @@ std::shared_ptr<Field<typename outerProductType<T1, T2>::type> > operator/
     return std::shared_ptr<Field<typename outerProductType<T1, T2>::type> >( *f1 / f2 );
 } 
 
+template <class T1, class T2>
+std::shared_ptr<Field<typename outerProductType<T1, T2>::type> > operator/
+( 
+    const std::shared_ptr<Field<T1> > f1,
+    const std::shared_ptr<Field<T2> > f2
+)
+{
+    return std::shared_ptr<Field<typename outerProductType<T1, T2>::type> >( (*f1) / (*f2) );
+}
+
 template <class T>
 std::shared_ptr<Field<T> > operator*
 ( 
@@ -1100,16 +1111,19 @@ std::shared_ptr<Field<T> > transpose
     std::shared_ptr<Field<T> > fld
 )
 {
+    reuseTmp<T> res( fld->mesh() );
+    T* ptr = (*res()).ptr();
+    T* f_ptr = fld->ptr();
+
     int nn = fld->ni()*fld->nj()*fld->nk();
-    T* ptr = fld->ptr();
 
     #pragma omp parallel for simd 
     for( int i=0; i<nn; i++ )
     {
-        ptr[i] = transpose( ptr[i] );
+        ptr[i] = transpose( f_ptr[i] );
     }
    
-    return fld;
+    return res();
 }
 
 template <class T>
@@ -1118,17 +1132,19 @@ std::shared_ptr<Field<T> > dev2
     std::shared_ptr<Field<T> > fld
 )
 {
+    reuseTmp<T> res( fld->mesh() );
+    T* ptr = (*res()).ptr();
+    T* f_ptr = fld->ptr();
+
     int nn = fld->ni()*fld->nj()*fld->nk();
-    T* ptr = fld->ptr();
 
     #pragma omp parallel for simd 
     for( int i=0; i<nn; i++ )
     {
-       ptr[i] = dev2( ptr[i] );
+       ptr[i] = dev2( f_ptr[i] );
     }
     
-    return fld;
+    return res();
 }
-
 
 

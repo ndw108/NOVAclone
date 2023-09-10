@@ -38,6 +38,10 @@ class Mesh
     int nj_;
     int nk_;
 
+    int glob_ni_;
+    int glob_nj_;
+    int glob_nk_;
+
     scalar dx_;
     scalar dy_;
     scalar dz_; 
@@ -78,6 +82,18 @@ class Mesh
     {
         return nk_;
     }
+    int glob_ni() const
+    {
+        return glob_ni_;
+    }
+    int glob_nj() const
+    {
+        return glob_nj_;
+    }
+    int glob_nk() const
+    {
+        return glob_nk_;
+    }
     scalar dx() const
     {
         return dx_;
@@ -90,6 +106,19 @@ class Mesh
     {
         return dz_;
     }
+    scalar lx() const
+    {
+        return lx_;
+    }
+    scalar ly() const
+    {
+        return ly_;
+    }
+    scalar lz() const
+    {
+        return lz_;
+    }
+
 
     scalar z( int k ) const;
 

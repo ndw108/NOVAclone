@@ -10,7 +10,7 @@
 #include "BC/BC.h"
 #include <functional>
 #include "Tools/Tools.h"
-#include "im/laplacian/laplacian.h"
+#include "poisson/poisson.h"
 
 #include <boost/timer/timer.hpp>
 
@@ -22,7 +22,7 @@
 int main(int argc, char* argv[])
 {
     settings::process( argc, argv ); 
-    Time time( 0.001, 20, 100 ); //args: dt, endT, write interval / steps
+    Time time( 0.001, 20, 1 ); //args: dt, endT, write interval / steps
 
     const scalar pi = 3.1415926536;
     parallelCom::decompose( settings::zoneName()+"/"+"mesh" ); 
@@ -35,6 +35,8 @@ int main(int argc, char* argv[])
     std::shared_ptr<Field<scalar> > p_ptr( std::make_shared<Field<scalar> >( mesh, 0, "pBC" ) );
     auto& p = (*p_ptr); 
     scalar mu = 1.0/1600.0;
+
+    poisson pEqn(p_ptr);
 
     //initial conditions
     for( int i=settings::m()/2; i<mesh.ni()-settings::m()/2; i++ )

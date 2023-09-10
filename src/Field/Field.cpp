@@ -83,3 +83,31 @@ std::shared_ptr<Field<scalar> > operator&&
     return res;
 }
 
+
+
+std::shared_ptr<Field<scalar> > sqrt
+(
+    Field<scalar>& fld
+)
+{
+    reuseTmp<scalar> res( fld.mesh() );
+    scalar* ptr = (*res()).ptr();
+    scalar* f_ptr = fld.ptr();
+    int nn = fld.ni()*fld.nj()*fld.nk();
+
+    #pragma omp parallel for simd 
+    for( int i=0; i<nn; i++ )
+    {
+       ptr[i] = std::sqrt( f_ptr[i] );
+    }
+    
+    return res();
+}
+
+std::shared_ptr<Field<scalar> > sqrt
+(
+    std::shared_ptr<Field<scalar> > fld
+)
+{
+    return sqrt(*fld);
+}

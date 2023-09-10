@@ -16,47 +16,34 @@
     Author: Alex Skillen. alex.skillen@manchester.ac.uk
 
 */
-template <class T>
-std::vector<std::shared_ptr<Field<T> > > reuseTmp<T>::tmp_( 20, std::shared_ptr<Field<T> >( NULL ) );
 
-template <class T>
-int reuseTmp<T>::index_ = -1;
+#ifndef POISSON_H
+#define POISSON_H
 
-template <class T>
-reuseTmp<T>::reuseTmp
-(
-    Mesh m
-)
+#include "fftw3.h"
+#include "Mesh/Mesh.h"
+#include "Field/Field.h"
+#include "Tools/Tools.h"
+
+class poisson
 {
-    #pragma omp master
-    for( int i=0; i<=20; i++ )
-    {
-        assert( i!=20 );
-        if( tmp_[i].unique() || tmp_[i] == NULL)
-        {
-            if( tmp_[i] == NULL )
-            {
-                tmp_[i] = std::shared_ptr<Field<T> >( new Field<T>( m, 0.0 ) );
-            }
-            index_ = i;
-            break;
-        }
-    }
+    protected:
+    fftw_plan r2c_;
+    fftw_plan c2r_;
+    std::shared_ptr<Field<scalar> > pptr_; 
+    
+    std::array<fftw_complex*, 2> phihat_; 
+    std::array<double*,2> phi_;
 
-    memset( tmp_[index_]->ptr(), 0, sizeof(T)*m.ni()*m.nj()*m.nk() );
+    public:
+    poisson( std::shared_ptr<Field<scalar> > );
+    ~poisson();
 
-    #pragma omp barrier
-}
+    void rhs(std::shared_ptr<Field<scalar> > f );
+    void solve();
+};
 
-
-
-
-
-
-
-
-
-
+#endif
 
 
 
