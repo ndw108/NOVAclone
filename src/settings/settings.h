@@ -33,7 +33,9 @@ class settings
     static int m_; 
     static const std::array< std::array<scalar, 4>, 4 > coef_;
     static const std::array< std::array<scalar, 7>, 6 > coefBD_;
- 
+    static const std::array<std::array<scalar, 4 >, 4 > RK4a_;
+    static const std::array<scalar, 4 > RK4c_;
+
     public:
     static bool& debug()
     {
@@ -70,6 +72,17 @@ class settings
         return coefBD_[o-1];
     }
     
+    inline static const std::array<std::array<scalar, 4>, 4>& RK4a()
+    {
+        return RK4a_;
+    }
+
+    inline static const std::array<scalar, 4>& RK4c()
+    {
+        return RK4c_;
+    }
+
+
     static void process( int argc, char* argv[] );
 };
 

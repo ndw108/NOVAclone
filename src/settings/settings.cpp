@@ -37,9 +37,18 @@ const std::array<std::array<scalar, 7>, 6 > settings::coefBD_ =
     std::array<scalar, 7>{ { -11.0/6.0,  3.0, -3.0/2.0,  1.0/3.0,   0.0,      0.0,      0.0     } }, //3rd
     std::array<scalar, 7>{ { -11.0/6.0,  3.0, -3.0/2.0,  1.0/3.0,   0.0,      0.0,      0.0     } }, //4th
     std::array<scalar, 7>{ { -11.0/6.0,  3.0, -3.0/2.0,  1.0/3.0,   0.0,      0.0,      0.0     } }, //5th
-    std::array<scalar, 7>{ { -49.0/20.0, 6.0, -15.0/2.0, 20.0/3.0, -15.0/4.0, 6.0/5.0, -1.0/6.0 } }, //6th
+    std::array<scalar, 7>{ { -49.0/20.0, 6.0, -15.0/2.0, 20.0/3.0, -15.0/4.0, 6.0/5.0, -1.0/6.0 } } //6th
 };
 
+
+const std::array<std::array<scalar, 4>, 4 > settings::RK4a_ =
+{
+    std::array<scalar, 4>{ { 0.5, 0  , 0  , 0 } },
+    std::array<scalar, 4>{ { 0  , 0.5, 0  , 0 } },
+    std::array<scalar, 4>{ { 0  , 0  , 1.0, 0 } },
+    std::array<scalar, 4>{ { 1.0/6.0, 1.0/3.0, 1.0/3.0, 1.0/6.0 } }
+};
+const std::array<scalar, 4 > settings::RK4c_ = { 0.5, 0.5, 1.0, 1.0 };
 
 void settings::process
 (

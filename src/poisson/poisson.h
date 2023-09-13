@@ -24,6 +24,7 @@
 #include "Mesh/Mesh.h"
 #include "Field/Field.h"
 #include "Tools/Tools.h"
+#include <memory>
 
 class poisson
 {
@@ -31,9 +32,14 @@ class poisson
     fftw_plan r2c_;
     fftw_plan c2r_;
     std::shared_ptr<Field<scalar> > pptr_; 
-    
+    unsigned ni_, nj_, nk_;
+
     std::array<fftw_complex*, 2> phihat_; 
     std::array<double*,2> phi_;
+    std::unique_ptr<double[]> up_k2_;
+    double* k2_;
+
+    void wavenumbers_();
 
     public:
     poisson( std::shared_ptr<Field<scalar> > );

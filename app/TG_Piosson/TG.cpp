@@ -22,16 +22,18 @@
 int main(int argc, char* argv[])
 {
     settings::process( argc, argv ); 
-    Time time( 0.001, 20, 1 ); //args: dt, endT, write interval / steps
+    Time time( 0.01, 20, 1.0 ); //args: dt, endT, write interval / steps
 
-    const scalar pi = 3.1415926536;
+    const scalar pi = tools::pi;
     parallelCom::decompose( settings::zoneName()+"/"+"mesh" ); 
 
     Mesh mesh( settings::zoneName()+"/"+"mesh", time );
 
     mesh.write(settings::zoneName()+"/data");
     
-    Field<vector> U( mesh, vector(1,0,0), "UBC" );
+    Field<vector> U( mesh, vector(0,0,0), "UBC" );
+    Field<vector> Ustar( mesh, vector(0,0,0), "UBC" );
+
     std::shared_ptr<Field<scalar> > p_ptr( std::make_shared<Field<scalar> >( mesh, 0, "pBC" ) );
     auto& p = (*p_ptr); 
     scalar mu = 1.0/1600.0;
@@ -50,7 +52,6 @@ int main(int argc, char* argv[])
                 scalar z = -pi+(k-settings::m()/2)*mesh.dz()+mesh.origin().z();
 
                 U(i, j, k) = vector(std::sin(x)*std::cos(y)*std::cos(z),-std::cos(x)*std::sin(y)*std::cos(z),0);
-                p(i, j, k) = 50 + 1.0/16.0*(std::cos(2*x)+std::cos(2*y))*(std::cos(2*z)+2);
             }
         }
     }
@@ -58,8 +59,6 @@ int main(int argc, char* argv[])
     U.correctBoundaryConditions();
     p.correctBoundaryConditions();
 
-
-    scalar RK4[4] = {1.0/6.0, 1.0/3.0, 1.0/3.0, 1.0/6.0 };
 
     std::ofstream data( settings::zoneName()+"/"+"dat.dat");
     scalar EkOld = 0.0;
@@ -72,8 +71,7 @@ int main(int argc, char* argv[])
 
         time++;
 
-        #include "UEqn.H" 
-        #include "pEqn.H"
+        #include "RKLoop.H" 
        
         mesh.write(settings::zoneName()+"/data");
         U.write(settings::zoneName()+"/data", "U");
