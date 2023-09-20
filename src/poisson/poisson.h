@@ -20,7 +20,7 @@
 #ifndef POISSON_H
 #define POISSON_H
 
-#include "fftw3.h"
+#include "pfft.h"
 #include "Mesh/Mesh.h"
 #include "Field/Field.h"
 #include "Tools/Tools.h"
@@ -29,12 +29,18 @@
 class poisson
 {
     protected:
-    fftw_plan r2c_;
-    fftw_plan c2r_;
+    pfft_plan r2c_;
+    pfft_plan c2r_;
     std::shared_ptr<Field<scalar> > pptr_; 
     unsigned ni_, nj_, nk_;
+    ptrdiff_t* n_;
+    ptrdiff_t* local_ni_;
+    ptrdiff_t* local_i_start_;
+    ptrdiff_t* local_no_;
+    ptrdiff_t* local_o_start_;
+    ptrdiff_t alloc_local_;
 
-    std::array<fftw_complex*, 2> phihat_; 
+    std::array<pfft_complex*, 2> phihat_; 
     std::array<double*,2> phi_;
     std::unique_ptr<double[]> up_k2_;
     double* k2_;

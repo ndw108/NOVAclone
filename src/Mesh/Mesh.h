@@ -38,9 +38,7 @@ class Mesh
     int nj_;
     int nk_;
 
-    int glob_ni_;
-    int glob_nj_;
-    int glob_nk_;
+    ptrdiff_t glob_n_[3];
 
     scalar dx_;
     scalar dy_;
@@ -65,6 +63,12 @@ class Mesh
 
     bool hyperbollic_;
 
+#ifdef HAVE_PFFT
+    ptrdiff_t alloc_local_;
+    ptrdiff_t local_ni_[3], local_i_start_[3];
+    ptrdiff_t local_no_[3], local_o_start_[3];
+#endif
+
     public:
     Mesh( int, int, int, scalar, scalar, scalar, Time& );
     Mesh( std::string, Time& );
@@ -81,18 +85,6 @@ class Mesh
     int nk() const
     {
         return nk_;
-    }
-    int glob_ni() const
-    {
-        return glob_ni_;
-    }
-    int glob_nj() const
-    {
-        return glob_nj_;
-    }
-    int glob_nk() const
-    {
-        return glob_nk_;
     }
     scalar dx() const
     {
@@ -161,7 +153,34 @@ class Mesh
     {
         return bboxHalo_;
     } 
-         
+
+#ifdef HAVE_PFFT
+    ptrdiff_t alloc_local()
+    {
+        return alloc_local_;
+    }
+    ptrdiff_t* glob_n()
+    {
+        return glob_n_;
+    }
+    ptrdiff_t* local_ni()
+    {
+        return local_ni_;
+    }
+    ptrdiff_t* local_i_start()
+    {
+        return local_i_start_;
+    }
+    ptrdiff_t* local_no()
+    {
+        return local_no_;
+    }
+    ptrdiff_t* local_o_start()
+    {
+        return local_o_start_;
+    }
+#endif
+
     void sendMUIPoints();
     void write( std::string );
     void writeCase( std::string );

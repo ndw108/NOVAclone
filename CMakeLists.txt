@@ -20,6 +20,7 @@ endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/findFFTW")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/findPFFT")
 set(LIBS)
 
 set(CMAKE_CXX_STANDARD 20) # C++20...
@@ -37,7 +38,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 option(USE_MPI "Use MPI" ON)
 option(USE_OMP "Use OpenMP" OFF)
-option(USE_FFTW "Use FFTW" ON)
+option(USE_PFFT "Use PFFT" ON)
 
 ###mpi
 if(USE_MPI)
@@ -63,11 +64,13 @@ if(USE_OMP)
   message(SEND_ERROR "OMP not yet supported / experimental.")
 endif()
 
-if(USE_FFTW)
+if(USE_PFFT)
   find_package(FFTW REQUIRED)
-  add_definitions(-DHAVE_MPI) 
+  find_package(PFFT REQUIRED)
+  add_definitions(-DHAVE_PFFT)
   include_directories(${FFTW_INCLUDE_DIRS})
-  set(LIBS ${LIBS} "${FFTW_LIBRARIES}")
+  include_directories(${PFFT_INCLUDES})
+  set(LIBS ${LIBS} "${FFTW_LIBRARIES}" "${PFFT_LIBRARIES}")
 endif()
 
 option(PROFILE "Use gperftools" OFF)

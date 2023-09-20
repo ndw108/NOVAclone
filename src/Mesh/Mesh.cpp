@@ -60,38 +60,47 @@ Mesh::Mesh( std::string fileName, Time& runTime )
         }
     }
 
-    glob_ni_=ni;
-    glob_nj_=nj;
-    glob_nk_=nk;
+    glob_n_[0] = ni;
+    glob_n_[1] = nj;
+    glob_n_[2] = nk;
 
-    ni_= (parallelCom::ni() > 1 ) ? ni/parallelCom::ni() + 1 : ni; 
-    nj_= (parallelCom::nj() > 1 ) ? nj/parallelCom::nj() + 1 : nj; 
-    nk_= (parallelCom::nk() > 1 ) ? nk/parallelCom::nk() + 1 : nk; 
-
-    dx_=lx/(ni-1);
-    dy_=ly/(nj-1);
-    dz_=lz/(nk-1);
+    dx_=lx/ni;
+    dy_=ly/nj;
+    dz_=lz/nk;
 
     lx_=lx;
     ly_=ly;
     lz_=lz;
 
+#ifdef HAVE_PFFT
+    alloc_local_ = pfft_local_size_dft_r2c_3d(glob_n_, parallelCom::pfftcomm(), PFFT_TRANSPOSED_NONE,
+            local_ni_, local_i_start_, local_no_, local_o_start_);
 
-    origin_ = vector( (ni_-1)*dx_*parallelCom::i()+ox, (nj_-1)*dy_*parallelCom::j()+oy, (nk_-1)*dz_*parallelCom::k()+oz );
+    ni_=local_ni_[0]+1;
+    nj_=local_ni_[1]+1;
+    nk_=local_ni_[2]+1;
+
+    origin_ = vector( dx_*local_i_start_[0]+ox, dy_*local_i_start_[1]+oy, dz_*local_i_start_[2]+oz );
+#else
+    ni_= ni/parallelCom::ni() + 1; 
+    nj_= nj/parallelCom::nj() + 1; 
+    nk_= nk/parallelCom::nk() + 1; 
 
     if( (parallelCom::i() == parallelCom::ni()-1) && parallelCom::ni()>1 )
     {
-        ni_ = ni - (ni_-1)*(parallelCom::ni()-1);
+        ni_ = ni + 1 - (ni_-1)*(parallelCom::ni()-1);
     }
     if( (parallelCom::j() == parallelCom::nj()-1) && parallelCom::nj()>1 )
     {
-        nj_ = nj - (nj_-1)*(parallelCom::nj()-1);
+        nj_ = nj + 1 - (nj_-1)*(parallelCom::nj()-1);
     }
     if( (parallelCom::k() == parallelCom::nk()-1) && parallelCom::nk()>1 )
     {
-        nk_ = nk - (nk_-1)*(parallelCom::nk()-1);
+        nk_ = nk + 1 - (nk_-1)*(parallelCom::nk()-1);
     }
 
+    origin_ = vector( (ni_-1)*dx_*parallelCom::i()+ox, (nj_-1)*dy_*parallelCom::j()+oy, (nk_-1)*dz_*parallelCom::k()+oz );
+#endif
     int ni_copy = ni_;
     int nj_copy = nj_;
     int nk_copy = nk_;
@@ -354,8 +363,12 @@ scalar Mesh::z( int k ) const
     if( hyperbollic_ )
     {
         scalar A = std::pow( s1_/s2_, 0.5 );
+#ifdef HAVE_PFFT
+        int globK = k-settings::m()/2 + local_i_start_[2];
+#else 
         int globK = k-settings::m()/2 + (parallelCom::k())*(nk_-settings::m()-1);
-        int globN = (parallelCom::nk())*(nk_-settings::m());
+#endif
+        int globN = glob_n_[2]+1;
         scalar R = scalar(globK)/scalar(globN-1)-0.5;
         static scalar b = 1.0;
         static bool setb = false;
