@@ -101,6 +101,24 @@ std::shared_ptr<Field<tensor> > grad
 
 }
 
+std::shared_ptr<Field<vector> > grad
+( 
+    const std::shared_ptr<Field<scalar> > fld
+)
+{
+    return ex::grad( (*fld) );
+}
+
+std::shared_ptr<Field<tensor> > grad
+( 
+    const std::shared_ptr<Field<vector> > fld
+)
+{
+    return ex::grad( (*fld) );
+}
+
+
+
 
 
 

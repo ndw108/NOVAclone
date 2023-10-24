@@ -45,6 +45,16 @@ std::shared_ptr<Field<tensor> > grad
     const Field<vector>&
 );
 
+std::shared_ptr<Field<tensor> > grad
+(
+    const std::shared_ptr<Field<vector> >
+);
+
+std::shared_ptr<Field<vector> > grad
+(
+    const std::shared_ptr<Field<scalar> >
+);
+
 
 
 }
