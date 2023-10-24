@@ -16,6 +16,9 @@
     Author: Alex Skillen. alex.skillen@manchester.ac.uk
 
 */
+
+#include "ex/curl/curl.h"
+
 namespace ex
 {
 
@@ -49,10 +52,16 @@ std::shared_ptr<Field<vector> > curl
         }
     }
 
-    curlfld->correctBoundaryConditions();
-
     return curlfld;
 
+}
+
+std::shared_ptr<Field<vector> > curl
+( 
+    const std::shared_ptr<Field<vector> > fld
+)
+{
+    return ex::curl( (*fld) );
 }
 
 

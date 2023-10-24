@@ -160,4 +160,10 @@ vector operator&
     const symmTensor
 );
 
+vector operator^
+(
+    const vector,
+    const vector
+);
+
 #endif

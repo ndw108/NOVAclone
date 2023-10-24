@@ -139,3 +139,18 @@ vector operator&
         v.x() * t.zx() + v.y() * t.zy() + v.z() * t.zz()
     );
 }
+
+
+vector operator^
+(
+    const vector v1,
+    const vector v2
+)
+{
+    return vector
+    (
+        v1.y()*v2.z() - v1.z()*v2.y(),
+        v1.z()*v2.x() - v1.x()*v2.z(),
+        v1.x()*v2.y() - v1.y()*v2.x()
+    );
+}

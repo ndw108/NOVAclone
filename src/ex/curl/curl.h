@@ -26,7 +26,7 @@
 #include "Types/tensor/tensor.h"
 
 #include "Field/Field.h"
-#include "explicit/grad/grad.h"
+#include "ex/grad/grad.h"
 
 
 namespace ex
@@ -37,9 +37,12 @@ std::shared_ptr<Field<vector> > curl
     const Field<vector>&
 );
 
+std::shared_ptr<Field<vector> > curl
+(
+    const std::shared_ptr<Field<vector> >
+);
 
 }
 
-#include "ex/curl/curl.hxx"
 
 #endif
