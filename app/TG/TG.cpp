@@ -3,6 +3,7 @@
 #include "Types/vector/vector.h"
 #include "ex/grad/grad.h"
 #include "ex/div/div.h"
+#include "ex/curl/curl.h"
 #include "ex/laplacian/laplacian.h"
 #include "Time/Time.h"
 #include "parallelCom/parallelCom.h"
@@ -29,9 +30,9 @@ int main(int argc, char* argv[])
 
     mesh.write(settings::zoneName()+"/data");
     
-    Field<vector> U( mesh, vector(1,0,0), "UBC" );
-    Field<scalar> rho( mesh, 1.0, "rhoBC" );
-    Field<scalar> p( mesh, 0, "pBC" ); 
+    Field<vector> U( mesh, vector(1,0,0), "U" );
+    Field<scalar> rho( mesh, 1.0, "rho" );
+    Field<scalar> p( mesh, 0, "p" ); 
     scalar mu = 1.0/1600.0;
 
     //initial conditions

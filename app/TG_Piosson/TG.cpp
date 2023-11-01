@@ -31,10 +31,10 @@ int main(int argc, char* argv[])
 
     mesh.write(settings::zoneName()+"/data");
     
-    Field<vector> U( mesh, vector(0,0,0), "UBC" );
-    Field<vector> Ustar( mesh, vector(0,0,0), "UBC" );
+    Field<vector> U( mesh, vector(0,0,0), "U" );
+    Field<vector> Ustar( mesh, vector(0,0,0), "U" );
 
-    std::shared_ptr<Field<scalar> > p_ptr( std::make_shared<Field<scalar> >( mesh, 0, "pBC" ) );
+    std::shared_ptr<Field<scalar> > p_ptr( std::make_shared<Field<scalar> >( mesh, 0, "p" ) );
     auto& p = (*p_ptr); 
     scalar mu = 1.0/1600.0;
 

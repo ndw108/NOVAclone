@@ -59,11 +59,11 @@ template <class T>
 Field<T>::Field
 ( 
     Mesh& m,
-    std::string file
+    std::string FieldName
 )
 : 
 m_(m),
-file_(file),
+FieldName_(FieldName),
 curTime_(-1)
 {
     void* mem = boost::alignment::aligned_alloc(64, sizeof(T)*ni()*nj()*nk());
@@ -75,9 +75,9 @@ curTime_(-1)
 
     v_=static_cast<T*>(mem); 
 
-    if( !file.empty() ) 
+    if( !FieldName.empty() ) 
     {
-        this->setBC( file );
+        this->setBC( FieldName + "BC" );
     }
 }
 
@@ -86,10 +86,10 @@ Field<T>::Field
 ( 
     Mesh& m,
     const T& val,
-    std::string file
+    std::string FieldName
 )
 :
-Field<T>( m, file )
+Field<T>( m, FieldName )
 {
     BOOST_ALIGN_ASSUME_ALIGNED(v_, 64); 
 
@@ -106,7 +106,7 @@ Field<T>::Field
     Field<T>& fld
 )
 :
-Field<T>( fld.m_, fld.file_ )
+Field<T>( fld.m_, fld.FieldName_ )
 {
     #pragma omp parallel for collapse(3)
     for( int i=0; i<ni(); i++ )

@@ -59,7 +59,7 @@ class Field
 {
     protected:
     Mesh m_;
-    std::string file_;
+    std::string FieldName_;
     T* v_;
     std::unique_ptr<BC<T> > bc_[54];
 
@@ -124,7 +124,7 @@ class Field
 
     std::string& name()
     {
-        return file_;
+        return FieldName_;
     }
 
     void correctBoundaryConditions();  
