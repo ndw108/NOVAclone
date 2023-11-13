@@ -70,7 +70,7 @@ if(USE_PFFT)
   add_definitions(-DHAVE_PFFT)
   include_directories(${FFTW_INCLUDE_DIRS})
   include_directories(${PFFT_INCLUDES})
-  set(LIBS ${LIBS} "${FFTW_LIBRARIES}" "${PFFT_LIBRARIES}")
+  set(LIBS ${LIBS} "${PFFT_LIBRARIES}" "${FFTW_LIBRARIES}" )
 endif()
 
 option(PROFILE "Use gperftools" OFF)

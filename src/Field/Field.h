@@ -336,13 +336,12 @@ std::shared_ptr<Field<scalar> > sqrt
     Field<scalar>&
 );
 
+
 std::shared_ptr<Field<vector> > operator^
 (
     const Field<vector>&,
     const Field<vector>&
 );
-
-
 
 
 template <class T1, class T2>
