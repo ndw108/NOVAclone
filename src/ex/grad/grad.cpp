@@ -118,8 +118,4 @@ std::shared_ptr<Field<tensor> > grad
 }
 
 
-
-
-
-
 }

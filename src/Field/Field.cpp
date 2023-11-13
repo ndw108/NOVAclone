@@ -94,7 +94,7 @@ std::shared_ptr<Field<scalar> > sqrt
     scalar* ptr = (*res()).ptr();
     scalar* f_ptr = fld.ptr();
     int nn = fld.ni()*fld.nj()*fld.nk();
-
+    
     #pragma omp parallel for simd 
     for( int i=0; i<nn; i++ )
     {
@@ -132,4 +132,4 @@ std::shared_ptr<Field<vector> > operator^
     ptr[i] = ptr1[i] & ptr2[i];
   }
   return res;
-}
+}	

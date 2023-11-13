@@ -400,6 +400,7 @@ void Field<T>::correctBoundaryConditions()
 
 }
 
+//edit to hdf5
 template <class T>
 void Field<T>::write( const std::string path, const std::string name )
 {
@@ -910,6 +911,7 @@ std::shared_ptr<Field<typename outerProductType<T1, T2>::type> > operator*
 {
     return (*f) * v;
 }
+
 
 template <class T1, class T2>
 std::shared_ptr<Field<typename innerProductType<T1, T2>::type> > operator&
