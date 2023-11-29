@@ -1,5 +1,7 @@
 #include "poisson.h"
+#include <stdint.h>
 #include <memory>
+
 
 poisson::poisson( std::shared_ptr<Field<scalar> > pptr )
 :
@@ -8,68 +10,143 @@ poisson::poisson( std::shared_ptr<Field<scalar> > pptr )
     ni_(pptr->mesh().ni()-settings::m()-1),
     nj_(pptr->mesh().nj()-settings::m()-1),
     nk_(pptr->mesh().nk()-settings::m()-1),
-    alloc_local_(pptr->mesh().alloc_local()),
+//    alloc_local_(pptr->mesh().alloc_local()),
     local_ni_(pptr->mesh().local_ni()),
     local_i_start_(pptr->mesh().local_i_start()),
     local_no_(pptr->mesh().local_no()),
     local_o_start_(pptr->mesh().local_o_start())
 {
-    for( int i=0; i<2; i++ )
-    {
-        phi_[i] = pfft_alloc_real(2*alloc_local_);
-        phihat_[i] = pfft_alloc_complex(alloc_local_);
-    }
-    r2c_ = pfft_plan_dft_r2c_3d( n_, phi_[0], phihat_[0], parallelCom::pfftcomm(), PFFT_FORWARD, PFFT_TRANSPOSED_NONE | PFFT_MEASURE);
-    c2r_ = pfft_plan_dft_c2r_3d( n_, phihat_[1], phi_[1], parallelCom::pfftcomm(), PFFT_BACKWARD, PFFT_TRANSPOSED_NONE | PFFT_MEASURE);
+fft = std::make_unique<FFT3d>(parallelCom::world(), 2);
+//    fft options
+//    tflag=0;
+//    permute = 0;
+//    memoryflag 1 for autoallocate, 0 for user allocate
+//    fft->memoryflag = 0;
+//    memorysize = 1; 
 
-    up_k2_ = std::make_unique<double[]>( alloc_local_ );
+    //fft initialise grid 
+     in_ilo = (int) 0;
+     in_ihi = (int) (ni_)-1;
+     in_jlo = (int) 0;
+     in_jhi = (int) (nj_)-1;
+     in_klo = (int) 0;
+     in_khi = (int) (nk_)-1;
+     out_ilo = (int) 0;
+     out_ihi = (int) (ni_)-1;
+     out_jlo = (int) 0;
+     out_jhi = (int) (nj_)-1;
+     out_klo = (int) 0;
+     out_khi = (int) (nk_)-1;
+//    nfft_in = (in_ihi-in_ilo+1) * (in_jhi-in_jlo+1) * (in_khi-in_klo+1);
+  nfft_in = ni_*nj_*nk_;
+  nfft_out = ni_*nj_*nk_;  
+//  nfft_out = (out_ihi-out_ilo+1) * (out_jhi-out_jlo+1) * (out_khi-out_klo+1);
+
+std::cout<<ni_<<" "<<nj_<<" "<<nk_<<" ";
+    //fft plan
+    
+    fft->setup(ni_, nj_, nk_,             // 3d verion
+          in_ilo, in_ihi, in_jlo, 
+          in_jhi, in_klo, in_khi,
+          out_ilo, out_ihi, out_jlo, 
+          out_jhi, out_klo, out_khi,
+          permute, fftsize, sendsize, recvsize);
+
+
+    //fft allocate memory
+
+//    FFT_SCALAR *sendbuf = (FFT_SCALAR *) malloc(sendsize*sizeof(FFT_SCALAR));
+//    FFT_SCALAR *recvbuf = (FFT_SCALAR *) malloc(recvsize*sizeof(FFT_SCALAR));
+//    fft->setup_memory(sendbuf,recvbuf); 
+
+//  bigint nbytes = ((bigint) sizeof(FFT_SCALAR)) * 2*fftsize;
+//  phi_ = (FFT_SCALAR *) malloc(nbytes);
+//  phihat_ = (FFT_SCALAR *) malloc(nbytes);
+//  if (nbytes && phi_ == NULL) printf("Failed malloc for FFT grid");
+
+std::cout<<fftsize<<" ";
+//   for( int i=0; i<2; i++ )
+//    {
+        up_phi_ = std::make_unique_for_overwrite<FFT_SCALAR[]>(fftsize*2);
+	up_phihat_ = std::make_unique_for_overwrite<FFT_SCALAR[]>(fftsize*2);
+	phi_ = up_phi_.get();
+	phihat_ = up_phihat_.get();
+//    }
+
+
+    up_k2_ = std::make_unique<double[]>(fftsize);
     k2_ = up_k2_.get();
     
     wavenumbers_();
 }
 
-void poisson::rhs( std::shared_ptr<Field<scalar> > f )
+//void poisson::rhs( std::shared_ptr<Field<scalar> > f )
+//{   
+//    int l=0;
+//    for( int i=settings::m()/2; i<pptr_->ni()-1-settings::m()/2; i++ )
+//    {
+//        for( int j=settings::m()/2; j<pptr_->nj()-1-settings::m()/2; j++ )
+//        {
+//            for( int k=settings::m()/2; k<pptr_->nk()-1-settings::m()/2; k++ )
+//            { 
+//                phi_[l++]= f->operator()(i, j, k);
+//                
+//	    }
+//        }
+//    }
+//  fft->compute(phi_,phihat_,1);
+//}
+
+void poisson::rhs( std::shared_ptr<Field<scalar> > f ) 
 {   
     int l=0;
-    for( int i=settings::m()/2; i<pptr_->ni()-1-settings::m()/2; i++ )
-    {
-        for( int j=settings::m()/2; j<pptr_->nj()-1-settings::m()/2; j++ )
-        {
-            for( int k=settings::m()/2; k<pptr_->nk()-1-settings::m()/2; k++ )
-            { 
-                phi_[0][l++] = f->operator()(i, j, k);
-            }
-        }
-    }
-
-    pfft_execute(r2c_);
+    for( int i=in_ilo; i<=in_ihi; i++ )
+    {   
+        for( int j=in_jlo; j<=in_jhi; j++ )
+        {   
+            for( int k=in_klo; k<=in_khi; k++ )
+            {   
+                phi_[l++]= f->operator()(i, j, k); 
+    
+            }   
+        }   
+    }   
+  fft->compute(phi_,phihat_,1);
 }
+
 
 void poisson::solve()
 {
     int l=0;
-    for( int i=0; i<local_no_[0]; i++ )
+    for( int i=in_ilo; i<=in_ihi; i++ )
     {
-        for( int j=0; j<local_no_[1]; j++ )
+        for( int j=in_jlo; j<=in_jhi; j++ )
         {
-            for( int k=0; k<local_no_[2]; k++ )
+            for( int k=in_klo; k<=in_khi; k++ )
             { 
                 if( k2_[l] < tools::eps )
                 {
-                    phihat_[1][l][0] = 0.0;
-                    phihat_[1][l][1] = 0.0;
+                    phihat_[l] = 0.0;
                 }
                 else
                 {
-                    phihat_[1][l][0] = -phihat_[0][l][0] / k2_[l];
-                    phihat_[1][l][1] = -phihat_[0][l][1] / k2_[l];
+                    phihat_[l] = -phihat_[l] / k2_[l];
                 }
+                l++;
+		if( k2_[l] < tools::eps )
+                {   
+                    phihat_[l] = 0.0;
+                }   
+                else
+                {   
+                    phihat_[l] = -phihat_[l] / k2_[l];
+                }   
                 l++;
             }
         }
     }
 
-    pfft_execute(c2r_);
+   fft->compute(phihat_,phi_,-1);
 
     l=0;
     for( int i=settings::m()/2; i<pptr_->ni()-1-settings::m()/2; i++ )
@@ -78,11 +155,11 @@ void poisson::solve()
         {
             for( int k=settings::m()/2; k<pptr_->nk()-1-settings::m()/2; k++ )
             { 
-                pptr_->operator()(i,j,k) = phi_[1][l++] / (n_[0]*n_[1]*n_[2]);
-            }
+                pptr_->operator()(i,j,k) = phi_[l++] / (n_[0]*n_[1]*n_[2]);
+            
+	    }
         }
     }
-
 }
 
 void poisson::wavenumbers_()
@@ -140,15 +217,5 @@ void poisson::wavenumbers_()
                 k2_[l++] = kpx*kpx + kpy*kpy + kpz*kpz;
             }
         }
-    }
-}
-
-
-poisson::~poisson()
-{
-    for( int i=0; i<2; i++ )
-    {
-        pfft_free(phi_[i]);
-        pfft_free(phihat_[i]);
     }
 }

@@ -32,6 +32,7 @@
 
     Bstar.correctBoundaryConditions();
     pBEqn.rhs(ex::div(Bstar)/time.dt());
+    pBEqn.wavenumbers_();
     pBEqn.solve();
     pB.correctBoundaryConditions();
     B = Bstar - ex::grad(pB)*time.dt();

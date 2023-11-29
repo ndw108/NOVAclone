@@ -22,7 +22,7 @@
 
 #ifdef HAVE_MPI
 boost::mpi::environment parallelCom::env_;
-MPI_Comm parallelCom::pfftcomm_;
+//MPI_Comm parallelCom::pfftcomm_;
 #ifdef HAVE_MUI
 boost::mpi::communicator parallelCom::world_(mui::mpi_split_by_app(), boost::mpi::comm_take_ownership);
 #else
@@ -110,7 +110,7 @@ void parallelCom::decompose(int ni, int nj, int nk)
             }
         }
     }
-    parallelCom::initpfft_();
+//    parallelCom::initpfft_();
 }
 
 void parallelCom::decompose( std::string fileName )
@@ -241,12 +241,4 @@ void parallelCom::initMUI( std::string fileName, Box bb )
 }
 #endif
 
-void parallelCom::initpfft_()
-{
-#ifdef HAVE_PFFT
-    pfft_init();
-    int np[3] = {ni_, nj_, nk_};
-    pfft_create_procmesh(3, parallelCom::world_, np, &pfftcomm_);
-#endif
-}
 

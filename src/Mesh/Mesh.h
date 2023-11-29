@@ -63,7 +63,7 @@ class Mesh
 
     bool hyperbollic_;
 
-#ifdef HAVE_PFFT
+#ifdef HAVE_FFTMPI
     ptrdiff_t alloc_local_;
     ptrdiff_t local_ni_[3], local_i_start_[3];
     ptrdiff_t local_no_[3], local_o_start_[3];
@@ -154,7 +154,7 @@ class Mesh
         return bboxHalo_;
     } 
 
-#ifdef HAVE_PFFT
+#ifdef HAVE_FFTMPI
     ptrdiff_t alloc_local()
     {
         return alloc_local_;

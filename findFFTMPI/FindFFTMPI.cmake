@@ -17,22 +17,22 @@
 #
 
 #If environment variable PFFTDIR is specified, it has same effect as PFFT_ROOT
-if( NOT PFFT_ROOT AND ENV{PFFTDIR} )
-  set( PFFT_ROOT $ENV{PFFTDIR} )
+if( NOT FFTMPI_ROOT AND ENV{FFTMPIDIR} )
+  set( FFTMPI_ROOT $ENV{FFTMPIDIR} )
 endif()
 
 # Check if we can use PkgConfig
 find_package(PkgConfig)
 
 #Determine from PKG
-if( PKG_CONFIG_FOUND AND NOT PFFT_ROOT )
-  pkg_check_modules( PKG_PFFT "pfft" QUIET )
+if( PKG_CONFIG_FOUND AND NOT FFTMPI_ROOT )
+  pkg_check_modules( PKG_FFTMPI "fftmpi" QUIET )
 endif()
 
 #Check whether to search static or dynamic libs
 set( CMAKE_FIND_LIBRARY_SUFFIXES_SAV ${CMAKE_FIND_LIBRARY_SUFFIXES} )
 
-if( ${PFFT_USE_STATIC_LIBS} )
+if( ${FFTMPI_USE_STATIC_LIBS} )
   set( CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_STATIC_LIBRARY_SUFFIX} )
 else()
   set( CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_SHARED_LIBRARY_SUFFIX} )
@@ -40,25 +40,25 @@ endif()
 
 #find libs
 find_library(
-  PFFT_LIBRARIES
-  NAMES "pfft"
-  PATHS ${PFFT_ROOT} ${PKG_PFFT_PREFIX} ${PKG_PFFT_LIBRARY_DIRS} ${LIB_INSTALL_DIR}
+  FFTMPI_LIBRARIES
+  NAMES "fftmpi"
+  PATHS ${FFTMPI_ROOT} ${PKG_FFTMPI_PREFIX} ${PKG_FFTMPI_LIBRARY_DIRS} ${LIB_INSTALL_DIR}
   PATH_SUFFIXES "lib" "lib64"
 )
 
 #find includes
 find_path(
-  PFFT_INCLUDES
-  NAMES "pfft.h"
-  PATHS ${PFFT_ROOT} ${PKG_PFFT_PREFIX} ${PKG_PFFT_INCLUDE_DIRS} ${INCLUDE_INSTALL_DIR}
+  FFTMPI_INCLUDES
+  NAMES "fft3d.h"
+  PATHS ${FFTMPI_ROOT} ${PKG_FFTMPI_PREFIX} ${PKG_FFTMPI_INCLUDE_DIRS} ${INCLUDE_INSTALL_DIR}
   PATH_SUFFIXES "include"
 )
 
 set( CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES_SAV} )
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(PFFT DEFAULT_MSG
-                                  PFFT_INCLUDES PFFT_LIBRARIES)
+find_package_handle_standard_args(FFTMPI DEFAULT_MSG
+                                  FFTMPI_INCLUDES FFTMPI_LIBRARIES)
 
-mark_as_advanced(PFFT_INCLUDES PFFT_LIBRARIES)
+mark_as_advanced(FFTMPI_INCLUDES FFTMPI_LIBRARIES)
 
