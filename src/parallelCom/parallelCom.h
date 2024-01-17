@@ -39,9 +39,9 @@
 #include "MUI/mui.h"
 #endif
 
-//#ifdef HAVE_PFFT
-//#include "pfft.h"
-//#endif
+#ifdef HAVE_FFTMPI
+#include "fft3d.h"
+#endif
 
 template <class T>
 class Field;
@@ -70,7 +70,6 @@ class parallelCom
 
 private:
     parallelCom() {};
-  //  static void initpfft_();
 
 public:
     //access
@@ -180,11 +179,6 @@ public:
     {
         return world_;
     }
-    
-//    static MPI_Comm& fftcomm()
-//    {
-//        return fftcomm_;
-//    }
 #endif
 
 #ifdef HAVE_MUI
@@ -216,11 +210,6 @@ public:
     static void initMUI( std::string, Box );  
 
 #endif
-
-
-
-
-
 
 };
 

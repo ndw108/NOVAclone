@@ -36,6 +36,7 @@ int main(int argc, char* argv[])
 
     std::shared_ptr<Field<scalar> > p_ptr( std::make_shared<Field<scalar> >( mesh, 0, "p" ) );
     auto& p = (*p_ptr); 
+
     scalar mu = 1.0/1600.0;
 
     poisson pEqn(p_ptr);
@@ -52,7 +53,7 @@ int main(int argc, char* argv[])
                 scalar z = -pi+(k-settings::m()/2)*mesh.dz()+mesh.origin().z();
 
                 U(i, j, k) = vector(std::sin(x)*std::cos(y)*std::cos(z),-std::cos(x)*std::sin(y)*std::cos(z),0);
-            }
+	    }
         }
     }
 

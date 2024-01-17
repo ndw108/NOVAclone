@@ -22,7 +22,7 @@
 int main(int argc, char* argv[])
 {
     settings::process( argc, argv ); 
-    Time time( 0.000001, 2, 5000 ); //args: dt, endT, write interval / steps
+    Time time( 0.0001, 1, 100 ); //args: dt, endT, write interval / steps
 
     const scalar pi = 3.1415926536;
     parallelCom::decompose( settings::zoneName()+"/"+"mesh" ); 
@@ -64,8 +64,7 @@ int main(int argc, char* argv[])
 
                 U(i, j, k) = vector((-2)*std::sin(y),2*std::sin(x),0);
                 B(i, j, k) = 0.8*vector( ((-2)*std::sin(y*2))+std::sin(z),((2*std::sin(x))+std::sin(z)),( std::sin(x)+std::sin(y) ));
-		p(i, j, k) = 0;
-		pB(i, j, k) = 0;
+		p(i, j, k) = 0.0;
                 rho(i, j, k) = 1.0;
             }
         }   

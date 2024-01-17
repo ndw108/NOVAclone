@@ -22,7 +22,6 @@
 
 #ifdef HAVE_MPI
 boost::mpi::environment parallelCom::env_;
-//MPI_Comm parallelCom::pfftcomm_;
 #ifdef HAVE_MUI
 boost::mpi::communicator parallelCom::world_(mui::mpi_split_by_app(), boost::mpi::comm_take_ownership);
 #else
@@ -110,7 +109,6 @@ void parallelCom::decompose(int ni, int nj, int nk)
             }
         }
     }
-//    parallelCom::initpfft_();
 }
 
 void parallelCom::decompose( std::string fileName )

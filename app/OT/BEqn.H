@@ -9,7 +9,6 @@
     reuseTmp<vector> Boldt( mesh );
     std::shared_ptr<Field<vector> > Bold( Boldt() );
 
-
     *Bold = B;
 
     for( int rk=0; rk<4; rk++ )
@@ -31,13 +30,11 @@
     }
 
     Bstar.correctBoundaryConditions();
-    pBEqn.rhs(ex::div(Bstar)/time.dt());
-    pBEqn.wavenumbers_();
+    pBEqn.rhs(  ex::div(Bstar) );  // /time.dt()
     pBEqn.solve();
     pB.correctBoundaryConditions();
-    B = Bstar - ex::grad(pB)*time.dt();
+    B = Bstar - ex::grad(pB); //*time.dt()
     B.correctBoundaryConditions();
-
 
     if( time.writelog() )
     {   

@@ -41,9 +41,9 @@ endif()
 #find libs
 find_library(
   FFTMPI_LIBRARIES
-  NAMES "fftmpi"
+  NAMES "libfft3dmpi"
   PATHS ${FFTMPI_ROOT} ${PKG_FFTMPI_PREFIX} ${PKG_FFTMPI_LIBRARY_DIRS} ${LIB_INSTALL_DIR}
-  PATH_SUFFIXES "lib" "lib64"
+  PATH_SUFFIXES "lib" "lib64" "so"
 )
 
 #find includes
