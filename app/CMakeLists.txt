@@ -10,3 +10,6 @@ add_executable (OT ./OT/OT.cpp)
 target_link_libraries (OT  NOVA ${Boost_LIBRARIES} ${MPI_LIBRARIES} ${FFTMPI_LIBRARIES} ${LIBS})
 install(TARGETS OT DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 
+add_executable (OT_Poisson ./OT_Poisson/OT.cpp)
+target_link_libraries (OT_Poisson  NOVA ${Boost_LIBRARIES} ${MPI_LIBRARIES} ${FFTMPI_LIBRARIES} ${LIBS})
+install(TARGETS OT DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
