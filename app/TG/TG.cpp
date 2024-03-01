@@ -21,7 +21,7 @@
 int main(int argc, char* argv[])
 {
     settings::process( argc, argv ); 
-    Time time( 0.001, 20, 1000 ); //args: dt, endT, write interval / steps
+    Time time( 0.01, 1.01, 1000 ); //args: dt, endT, write interval / steps
 
     const scalar pi = 3.1415926536;
     parallelCom::decompose( settings::zoneName()+"/"+"mesh" ); 

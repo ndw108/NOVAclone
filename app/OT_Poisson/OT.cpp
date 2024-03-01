@@ -23,7 +23,7 @@
 int main(int argc, char* argv[])
 {
     settings::process( argc, argv ); 
-    Time time( 0.001, 8, 50 ); //args: dt, endT, write interval / steps
+    Time time( 0.005, 8.01, 20 ); //args: dt, endT, write interval / steps
 
     const scalar pi = tools::pi;
     parallelCom::decompose( settings::zoneName()+"/"+"mesh" ); 
@@ -51,6 +51,9 @@ int main(int argc, char* argv[])
     poisson pEqn(p_ptr);
     poisson pBEqn(pB_ptr);
 
+    std::default_random_engine eng( parallelCom::myProcNo() );
+    std::uniform_real_distribution<double> dist(-1.0,1.0);
+
     //initial conditions
     for( int i=settings::m()/2; i<mesh.ni()-settings::m()/2; i++ )
     {
@@ -58,13 +61,15 @@ int main(int argc, char* argv[])
         {
             for( int k=settings::m()/2; k<mesh.nk()-settings::m()/2; k++ )
             {
-                scalar x = (i-settings::m()/2)*mesh.dx()+mesh.origin().x();
-                scalar y = (j-settings::m()/2)*mesh.dy()+mesh.origin().y();
-                scalar z = (k-settings::m()/2)*mesh.dz()+mesh.origin().z();
-		
+		//OT Vortex initial conditions
+                scalar x = -pi+(i-settings::m()/2)*mesh.dx()+mesh.origin().x();
+                scalar y = -pi+(j-settings::m()/2)*mesh.dy()+mesh.origin().y();
+                scalar z = -pi+(k-settings::m()/2)*mesh.dz()+mesh.origin().z();
+
 		U(i, j, k) = vector((-2.0)*std::sin(y),2.0*std::sin(x),0.0);
-                B(i, j, k) = 0.818*vector( ((-2.0)*std::sin(y*2.0))+std::sin(z),((2.0*std::sin(x))+std::sin(z)),( std::sin(x)+std::sin(y) ));
-            }
+		B(i, j, k) = 0.818*vector( ((-2.0)*std::sin(y*2.0))+std::sin(z),((2.0*std::sin(x))+std::sin(z)),( std::sin(x)+std::sin(y) ));
+
+	    }
         }
     }
 

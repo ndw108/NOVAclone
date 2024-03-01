@@ -12,21 +12,16 @@ poisson::poisson( std::shared_ptr<Field<scalar> > pptr )
     nk_(pptr->mesh().nk()-settings::m()-1),
     localStart_(pptr->mesh().localStart())
 {
-fft = std::make_unique<FFT3d>(parallelCom::world(), 2);
-  //fft options
-  //tflag=0;
-  permute = 0;
 
-  NFAST = n_[0];
-  NMID = n_[1];
-  NSLOW = n_[2];
+  int NFAST = n_[0];
+  int NMID = n_[1];
+  int NSLOW = n_[2];
 
-//  int MPI_Init( int *argc, char ***argv );
-      MPI_Comm world = parallelCom::world();
-  
   nfast = NFAST;
   nmid = NMID;
   nslow = NSLOW;
+
+  MPI_Comm world = parallelCom::world();
 
   npfast  = parallelCom::ni();
   npmid   = parallelCom::nj();
@@ -69,9 +64,9 @@ fft = std::make_unique<FFT3d>(parallelCom::world(), 2);
           iglobal = inxlo + ilocal;
           jglobal = inylo + jlocal;
           kglobal = inzlo + klocal;
-          printf("Value (%d,%d,%d) on proc %d \n",
-               iglobal,jglobal,kglobal,
-               parallelCom::myProcNo());
+//          printf("Value (%d,%d,%d) on proc %d \n",
+//               iglobal,jglobal,kglobal,
+//               parallelCom::myProcNo());
 	if (m == 0)
 	{
 	localStart_[0] = iglobal;
@@ -83,28 +78,28 @@ fft = std::make_unique<FFT3d>(parallelCom::world(), 2);
   if (parallelCom::myProcNo() < parallelCom::worldSize()) MPI_Send(&tmp,0,MPI_INT,parallelCom::myProcNo()+1,0,world);
   } 
 }
-
-std::cout<<ni_<<" "<<nj_<<" "<<nk_<<" ";
-std::cout<<ilo<<" "<<ihi<<" "<<jlo<<" "<<jhi<<" "<<klo<<" "<<khi<<" "<<npfast<<" "<<npmid<<" "<<npslow<<" "<<nfast<<" "<<nmid<<" "<<nslow<<" ";
-
-    //fft plan
-    fft->setup(nfast, nmid, nslow,             // 3d verion
-          ilo, ihi, jlo, 
-          jhi, klo, khi,
-          ilo, ihi, jlo, 
-          jhi, klo, khi,
-          permute, fftsize, sendsize, recvsize);
+	//sanity check for fft coordinates    
+    printf("Assigned local start coordinates (%d,%d,%d) on proc %d \n",
+                localStart_[0],localStart_[1],localStart_[2],parallelCom::myProcNo());
+    printf("local range ijk (%d,%d,%d,%d,%d,%d)\n", inxlo,inxhi,inylo,inyhi,inzlo,inzhi);
 
 
-    //fft allocate memory
-    std::cout<<fftsize<<" ";
-        
-    up_phi_ = std::make_unique_for_overwrite<FFT_SCALAR[]>(2*fftsize);
-    phi_ = up_phi_.get();
+ 	//initialize local fft domain
+    up_N = std::make_unique<heffte::box3d<>>(std::array<int, 3> ({inxlo, inylo, inzlo})  ,std::array<int, 3> ({inxhi, inyhi, inzhi}));
+    N = up_N.get();
 
-    up_k2_ = std::make_unique<double[]>(2*fftsize);
+	//allocate memory for fft
+    fft = std::make_unique<heffte::fft3d<heffte::backend::fftw>>(*N, *N, world);
+
+    up_k2_ = std::make_unique<double[]>((fft->size_inbox()));
     k2_ = up_k2_.get();
     
+    up_phi_ = std::make_unique<std::vector<double>>((fft->size_inbox()));
+    phi_ = up_phi_.get();
+   
+    up_phihat_ = std::make_unique<std::vector<std::complex<double>>>((fft->size_outbox()));
+    phihat_ = up_phihat_.get();
+   
     wavenumbers_();
 }
 
@@ -118,51 +113,39 @@ void poisson::rhs( std::shared_ptr<Field<scalar> > f )
         {
             for( int i=(settings::m()/2); i<(pptr_->ni()-1-settings::m()/2); i++ )
 	    {
-                phi_[l] = (double) f->operator()(i, j, k); 
-		l++;
-		phi_[l] = 0.0;
+                phi_[0][l] = f->operator()(i, j, k) ; 
 		l++;
             }   
-        }   
-    }
-    fft->compute(phi_,phi_,1);
+        }
+    }   
 }
 
 
 void poisson::solve()
 {
-   int l=0;
-    for( int k=0; k<nk_; k++ )
-    {   
-        for( int j=0; j<nj_; j++ )
+    fft->forward(phi_->data(), phihat_->data());
+    
+    int l=0;
+        for( int k=0; k<nk_; k++ )
         {   
-	    for( int i=0; i<ni_; i++ )
-	    {
+            for( int j=0; j<nj_; j++ )
+            {   
+                for( int i=0; i<ni_; i++ )
+                {
 		if( k2_[l] < tools::eps )
                 {
-                    phi_[l] = 0.0;
+		    phihat_[0][l] = std::complex<double>(0.0, 0.0);
 		}
-                else
+               else
                 {
-                    phi_[l] = -phi_[l] / k2_[l];
+                    phihat_[0][l] = std::complex<double>(( -std::real(phihat_[0][l]) / k2_[l]) , -std::imag(phihat_[0][l]) / k2_[l]);
 		}
 		l++;	
-           
-		if( k2_[l] < tools::eps )
-                {   
-                    phi_[l] = 0.0;
-                }   
-                else
-                {   
-                    phi_[l] = -phi_[l] / k2_[l];
-                }   
-                l++; 
-
 	    }
         }
     }
-
-    fft->compute(phi_,phi_,-1);
+    
+    fft->backward(phihat_->data(), phi_->data());
     
     l=0;
     for( int k=(settings::m()/2); k<(pptr_->nk()-1-settings::m()/2); k++ )
@@ -171,14 +154,12 @@ void poisson::solve()
         {
             for( int i=(settings::m()/2); i<(pptr_->ni()-1-settings::m()/2); i++ )
 	    {
-		pptr_->operator()(i,j,k) = phi_[l];
+		pptr_->operator()(i,j,k) = phi_[0][l] / (n_[0]*n_[1]*n_[2]);
     		l++;
-		l++;
 	
 	    }
         }
     }
-
 }
 
 void poisson::wavenumbers_()
@@ -186,17 +167,15 @@ void poisson::wavenumbers_()
     Mesh& m = pptr_->mesh();
     auto pi = tools::pi;
 
-    printf("Assigned local start coordinates (%d,%d,%d) on proc %d \n",
-                localStart_[0],localStart_[1],localStart_[2],parallelCom::myProcNo());
     
     scalar kx, ky, kz; //TODO: will be complex for non-central schemes
     int l=0;
-    for( int k=0; k<nk_; k++ )
-    {   
-        for( int j=0; j<nj_; j++ )
-        {   
-            for( int i=0; i<ni_; i++ )
+	for( int k=0; k<nk_; k++ )
+	{
+	    for( int j=0; j<nj_; j++ )
 	    {
+		for( int i=0; i<ni_; i++ )
+		{
 
 		if (2*( i + localStart_[0] )<n_[0])
                     kx = 2.0*pi*( i + localStart_[0]  )/m.lx();
@@ -239,8 +218,6 @@ void poisson::wavenumbers_()
                 
                 k2_[l] = kpx*kpx + kpy*kpy + kpz*kpz;
                 l++;
-		k2_[l] = kpx*kpx + kpy*kpy + kpz*kpz;
-		l++;
 	    }
         }
     }
@@ -248,5 +225,9 @@ void poisson::wavenumbers_()
 
 poisson::~poisson()
 {
-	free(phi_);
+	free(N);
+	fftw_free(phi_);
+	fftw_free(phihat_);
+
 }
+

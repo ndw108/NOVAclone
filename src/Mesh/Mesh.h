@@ -67,7 +67,7 @@ class Mesh
 
     bool hyperbollic_;
 
-#ifdef HAVE_FFTMPI
+#ifdef HAVE_HEFFTE
     ptrdiff_t localStart_[3]; 
 #endif
 
@@ -156,7 +156,7 @@ class Mesh
         return bboxHalo_;
     } 
 
-#ifdef HAVE_FFTMPI
+#ifdef HAVE_HEFFTE
     ptrdiff_t* glob_n()
     {
         return glob_n_;

@@ -21,19 +21,21 @@
 #define POISSON_H
 
 #include <stdint.h>
-#include "fft3d.h"
+#include "heffte.h"
+
 #include "Mesh/Mesh.h"
 #include "Field/Field.h"
 #include "Tools/Tools.h"
 #include <mpi.h>
 #include <memory>
+#include <complex>
 
-using namespace FFTMPI_NS;
+using namespace heffte;
 
 class poisson
 {
     protected:
-    std::unique_ptr<FFT3d> fft;
+    std::unique_ptr<heffte::fft3d<heffte::backend::fftw>> fft;
     std::shared_ptr<Field<scalar> > pptr_; 
     int fftsize;
     unsigned ni_, nj_, nk_;
@@ -51,16 +53,22 @@ class poisson
     int nfft_in;
     int nfft_out;
     int ilo,ihi,jlo,jhi,klo,khi;
-    int permute,sendsize,recvsize;
+    int permute,exchange,sendsize,recvsize;
     int flag,niter,tflag;
     double tmax; 
     int memorysize;
+ 
+    std::unique_ptr<std::vector<std::complex<double>>> up_phihat_;
+    std::vector<std::complex<double>>* phihat_; 
 
-    std::unique_ptr<FFT_SCALAR[]> up_phi_;
-    FFT_SCALAR* phi_;
+    std::unique_ptr<std::vector<double>> up_phi_;
+    std::vector<double>* phi_;
+
     std::unique_ptr<double[]> up_k2_;
     double* k2_;
-
+    
+    heffte::box3d<>* N;
+    std::unique_ptr<heffte::box3d<>> up_N;
 
     public:
     poisson( std::shared_ptr<Field<scalar> > );
@@ -72,6 +80,5 @@ class poisson
 };
 
 #endif
-
 
 

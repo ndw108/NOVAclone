@@ -28,6 +28,7 @@
 
         Ustar.correctBoundaryConditions();
         pEqn.rhs(ex::div(Ustar) / time.dt() / settings::RK4c()[rk]);
+
 	pEqn.solve();
         p.correctBoundaryConditions();
         U = Ustar - settings::RK4c()[rk]*time.dt() * ex::grad(p);

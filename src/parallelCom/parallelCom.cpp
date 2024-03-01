@@ -60,13 +60,13 @@ void parallelCom::decompose(int ni, int nj, int nk)
 {
     int np=worldSize_;
     
-    double lsq=1e10;
+    double lsq=1e10;    
 
     for( int ii=1; ii<=np; ii++ )
     {
         for( int jj=1; jj<=np/ii; jj++ )
         {
-            if( std::fabs( double(np)/double(ii)/double(jj) - np/ii/jj ) < 1e-5  ) 
+            if( std::fabs( double(np)/double(ii)/double(jj) - np/ii/jj ) < 1e-5  )
             {
                 int kk=np/ii/jj;
 
@@ -82,6 +82,28 @@ void parallelCom::decompose(int ni, int nj, int nk)
             }
         }
     }
+//    pencil decomposition template
+
+//    int ii=1;
+//      for( int jj=1; jj<=np; jj++ )
+//        {   
+//            if( std::fabs( double(np)/double(jj) - np/jj ) < 1e-5  )   
+//            {   
+//                int kk=np/jj;
+//
+//                double lsqc = std::pow( double(nj)/double(jj), 2 ) + std::pow( double(nk)/double(kk), 2 );
+//
+//                if( lsqc < lsq )
+//               {   
+//                    lsq=lsqc;
+//                    ni_=ii;
+//                    nj_=jj;
+//                    nk_=kk;
+//                }   
+//            }   
+//        }      
+      
+    
             
     if( master() ) 
     {

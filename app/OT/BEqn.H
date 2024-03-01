@@ -29,12 +29,12 @@
 
     }
 
-    Bstar.correctBoundaryConditions();
-    pBEqn.rhs(  ex::div(Bstar) );  // /time.dt()
-    pBEqn.solve();
-    pB.correctBoundaryConditions();
-    B = Bstar - ex::grad(pB); //*time.dt()
-    B.correctBoundaryConditions();
+//    Bstar.correctBoundaryConditions();
+//    pBEqn.rhs(  ex::div(Bstar) );  // /time.dt()
+//    pBEqn.solve();
+//    pB.correctBoundaryConditions();
+//    B = Bstar - ex::grad(pB); //*time.dt()
+//    B.correctBoundaryConditions();
 
     if( time.writelog() )
     {   

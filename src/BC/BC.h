@@ -54,7 +54,7 @@ class BC
     }
 
     //access
-    scalar& val()
+    scalar val()
     {
         return val_;
     }

@@ -22,7 +22,7 @@
 int main(int argc, char* argv[])
 {
     settings::process( argc, argv ); 
-    Time time( 0.01, 20, 1.0 ); //args: dt, endT, write interval / steps
+    Time time( 0.01, 20, 10 ); //args: dt, endT, write interval / steps
 
     const scalar pi = tools::pi;
     parallelCom::decompose( settings::zoneName()+"/"+"mesh" ); 
@@ -79,8 +79,8 @@ int main(int argc, char* argv[])
         p.write(settings::zoneName()+"/data", "p"); 
 
 
-        if( time.writelog() )
-        {
+//        if( time.writelog() )
+//        {
             if( parallelCom::master() )
             { 
                 std::cout << "Step: " << time.timeStep() << ".              Time: " << time.curTime() << std::endl;
@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
             }
 
             tools::CFL( U, mesh );
-        }
+//        }
 
         scalar Ek=0.0;
         int n=0;

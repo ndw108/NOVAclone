@@ -103,7 +103,7 @@ Mesh::Mesh( std::string fileName, Time& runTime )
     }
 
     origin_ = vector( (ni_-1)*dx_*parallelCom::i()+ox, (nj_-1)*dy_*parallelCom::j()+oy, (nk_-1)*dz_*parallelCom::k()+oz );
-#ifdef HAVE_FFTMPI
+#ifdef HAVE_HEFFTE
     localStart_[0] = origin_[0];
     localStart_[1] = origin_[1];
     localStart_[2] = origin_[2];
@@ -326,6 +326,7 @@ void Mesh::writeCase( std::string path )
     fout << "vector per node: velocity " << boost::format("U.%|04|.*****.dat") % parallelCom::myProcNo() << std::endl ;
     fout << "scalar per node: p  " << boost::format("p.%|04|.*****.dat") % parallelCom::myProcNo() << std::endl ;
     fout << "scalar per node: T  " << boost::format("T.%|04|.*****.dat") % parallelCom::myProcNo() << std::endl ;
+    fout << "vector per node: B " << boost::format("B.%|04|.*****.dat") % parallelCom::myProcNo() << std::endl ;
 
 	fout << "TIME" << std::endl ;
 	fout << "time set: 1" << std::endl ;
@@ -370,7 +371,7 @@ scalar Mesh::z( int k ) const
     if( hyperbollic_ )
     {
         scalar A = std::pow( s1_/s2_, 0.5 );
-#ifdef HAVE_FFTMPI
+#ifdef HAVE_HEFFTE
         int globK = k-settings::m()/2 + localStart_[2];
 #else 
         int globK = k-settings::m()/2 + (parallelCom::k())*(nk_-settings::m()-1);

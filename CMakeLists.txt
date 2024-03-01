@@ -20,7 +20,7 @@ endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/findFFTW")
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/findFFTMPI")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/findHEFFTE")
 set(LIBS)
 
 set(CMAKE_CXX_STANDARD 20) # C++20...
@@ -38,7 +38,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 option(USE_MPI "Use MPI" ON)
 option(USE_OMP "Use OpenMP" OFF)
-option(USE_FFTMPI "Use FFTMPI" ON)
+option(USE_HEFFTE "Use Heffte" ON)
 
 ###mpi
 if(USE_MPI)
@@ -64,13 +64,13 @@ if(USE_OMP)
   message(SEND_ERROR "OMP not yet supported / experimental.")
 endif()
 
-if(USE_FFTMPI)
+if(USE_HEFFTE)
+  add_definitions(-DHAVE_HEFFTE)
+  find_package(Heffte REQUIRED)
   find_package(FFTW REQUIRED)
-  find_package(FFTMPI REQUIRED)
-  add_definitions(-DHAVE_FFTMPI)
+  include_directories(${HEFFTE_INCLUDES})
   include_directories(${FFTW_INCLUDE_DIRS})
-  include_directories(${FFTMPI_INCLUDES})
-  set(LIBS ${LIBS} "${FFTMPI_LIBRARIES}" "${FFTW_LIBRARIES}" )
+  set(LIBS ${LIBS} "${HEFFTE_LIBRARIES}" "${FFTW_LIBRARIES}")
 endif()
 
 option(PROFILE "Use gperftools" OFF)
