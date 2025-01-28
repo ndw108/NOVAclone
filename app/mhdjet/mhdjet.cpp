@@ -183,7 +183,6 @@ int main(int argc, char* argv[])
         {
             for( int k=settings::m()/2; k<mesh.nk()-settings::m()/2; k++ )
             {
-		//OT Vortex initial conditions
                 scalar x = (i-settings::m()/2)*mesh.dx()+mesh.origin().x();
                 scalar y = -10+(j-settings::m()/2)*mesh.dy()+mesh.origin().y();
                 scalar z = (k-settings::m()/2)*mesh.dz()+mesh.origin().z();
@@ -214,10 +213,9 @@ int main(int argc, char* argv[])
 		U(i, j, k).y() += (0.0001*dist(eng))*std::exp(-(y*y));
 		U(i, j, k).x() += (0.001*std::sin(x*0.9) + 0.0001*dist(eng))*std::exp(-(y*y));
 		U(i, j, k).z() += (0.0001*dist(eng))*std::exp(-(y*y));		
-		//3d noise
-
 
 		B(i, j, k) = vector(0.015, 0.0, 0.0);
+
 	    }
         }
     }
