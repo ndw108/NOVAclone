@@ -18,7 +18,6 @@
 */
 #ifndef FIELD_H
 #define FIELD_H
-
 #if defined(_OPENMP)
 #include <omp.h>
 #endif
@@ -129,6 +128,7 @@ class Field
 
     void correctBoundaryConditions();  
     void write(std::string, std::string);
+//    void H5write(std::string, std::string);
     void read(std::string, std::string);
     void read(std::string, std::string, int);
     void setBC( std::string );

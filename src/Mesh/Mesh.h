@@ -28,6 +28,7 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
+#include "H5Cpp.h"
 
 
 class Time;
@@ -57,7 +58,7 @@ class Mesh
 
     vector origin_;
 
-    Time& runTime_;
+//    Time& runTime_;
 
     Box bbox_;
     Box bboxHalo_;
@@ -74,6 +75,7 @@ class Mesh
     public:
     Mesh( int, int, int, scalar, scalar, scalar, Time& );
     Mesh( std::string, Time& );
+    Time& runTime_;
 
     //access
     int ni() const
@@ -172,6 +174,7 @@ class Mesh
     void writeCase( std::string );
     void writeSOS();
     void writeRestartInfo( std::string );
+//    void H5write( std::string );
 };
 
 #endif

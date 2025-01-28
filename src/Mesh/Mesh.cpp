@@ -18,7 +18,8 @@
 */
 #include "Mesh/Mesh.h"
 #include <sstream>
-
+#include <memory>
+#include "H5Cpp.h"
 
 Mesh::Mesh( std::string fileName, Time& runTime )
 :
@@ -324,9 +325,12 @@ void Mesh::writeCase( std::string path )
 
     fout << "VARIABLE" << std::endl;
     fout << "vector per node: velocity " << boost::format("U.%|04|.*****.dat") % parallelCom::myProcNo() << std::endl ;
+    fout << "vector per node: Uprime " << boost::format("Uprime.%|04|.*****.dat") % parallelCom::myProcNo() << std::endl ;
+    fout << "vector per node: Udash " << boost::format("Udash.%|04|.*****.dat") % parallelCom::myProcNo() << std::endl ;
     fout << "scalar per node: p  " << boost::format("p.%|04|.*****.dat") % parallelCom::myProcNo() << std::endl ;
     fout << "scalar per node: T  " << boost::format("T.%|04|.*****.dat") % parallelCom::myProcNo() << std::endl ;
     fout << "vector per node: B " << boost::format("B.%|04|.*****.dat") % parallelCom::myProcNo() << std::endl ;
+    fout << "vector per node: J " << boost::format("J.%|04|.*****.dat") % parallelCom::myProcNo() << std::endl ;
 
 	fout << "TIME" << std::endl ;
 	fout << "time set: 1" << std::endl ;
@@ -344,7 +348,7 @@ void Mesh::writeCase( std::string path )
 
 	fout.close() ;
 
-    this->writeRestartInfo( path );
+   this->writeRestartInfo( path );
 }
 
 void Mesh::writeRestartInfo( std::string path )
@@ -363,6 +367,7 @@ void Mesh::writeRestartInfo( std::string path )
 
     fout.close();
 }
+
 
 
 scalar Mesh::z( int k ) const
@@ -439,3 +444,4 @@ void Mesh::sendMUIPoints()
     }
 }
 #endif
+

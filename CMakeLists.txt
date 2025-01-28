@@ -81,6 +81,12 @@ if(PROFILE)
   set(LIBS ${LIBS} "${GPERFTOOLS_LIBRARIES}")
 endif()
 
+find_package(HDF5 COMPONENTS C CXX HL REQUIRED)
+include_directories( ${HDF5_INCLUDES} )
+include_directories (${HDF5_INCLUDE_DIR})
+set (LIBS ${LIBS} "${HDF5_CXX_LIBRARIES}")
+
+
 include_directories(src)
 
 add_subdirectory (src)

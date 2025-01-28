@@ -22,7 +22,7 @@
 int main(int argc, char* argv[])
 {
     settings::process( argc, argv ); 
-    Time time( 0.01, 20, 10 ); //args: dt, endT, write interval / steps
+    Time time( 0.01, 20, 1 ); //args: dt, endT, write interval / steps
 
     const scalar pi = tools::pi;
     parallelCom::decompose( settings::zoneName()+"/"+"mesh" ); 
@@ -53,6 +53,7 @@ int main(int argc, char* argv[])
                 scalar z = -pi+(k-settings::m()/2)*mesh.dz()+mesh.origin().z();
 
                 U(i, j, k) = vector(std::sin(x)*std::cos(y)*std::cos(z),-std::cos(x)*std::sin(y)*std::cos(z),0);
+//		U(i, j, k) = vector(0.0, 0.0, 0.0);
 	    }
         }
     }

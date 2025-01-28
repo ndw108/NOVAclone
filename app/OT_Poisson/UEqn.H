@@ -28,14 +28,15 @@
             Ustar = Ustar+settings::RK4a()[rk][j]*dU[j];
         }
 
+    }
+
         Ustar.correctBoundaryConditions();
-        pEqn.rhs(ex::div(Ustar) / time.dt() / settings::RK4c()[rk]);
+        pEqn.rhs(ex::div(Ustar) / time.dt());
         pEqn.solve();
         p.correctBoundaryConditions();
-        U = Ustar - settings::RK4c()[rk]*time.dt() * ex::grad(p);
+        U = Ustar - time.dt() * ex::grad(p);
 
         U.correctBoundaryConditions();
-    }
 
 
     if( time.writelog() )

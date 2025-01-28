@@ -22,6 +22,7 @@
 
 #include <stdint.h>
 #include "heffte.h"
+#include <heffte_common.h>
 
 #include "Mesh/Mesh.h"
 #include "Field/Field.h"
@@ -36,6 +37,9 @@ class poisson
 {
     protected:
     std::unique_ptr<heffte::fft3d<heffte::backend::fftw>> fft;
+    std::unique_ptr<heffte::fft3d<heffte::backend::fftw>> fft2d;
+    std::unique_ptr<heffte::fft3d<heffte::backend::fftw_cos1>> dct;
+    std::unique_ptr<heffte::fft3d<heffte::backend::fftw>> fftx;
     std::shared_ptr<Field<scalar> > pptr_; 
     int fftsize;
     unsigned ni_, nj_, nk_;
@@ -61,22 +65,53 @@ class poisson
     std::unique_ptr<std::vector<std::complex<double>>> up_phihat_;
     std::vector<std::complex<double>>* phihat_; 
 
+    std::unique_ptr<std::vector<double>> up_cosphi_;
+    std::vector<double>* cosphi_;
+
+    std::unique_ptr<std::vector<std::complex<double>>> up_cosphicomplex_;
+    std::vector<std::complex<double>>* cosphicomplex_;
+
+    std::unique_ptr<std::vector<double>> up_cosphihat_;
+    std::vector<double>* cosphihat_;
+
+    std::unique_ptr<std::vector<double>> up_dctworkspace_;
+    std::vector<double>* dctworkspace_;
+
     std::unique_ptr<std::vector<double>> up_phi_;
     std::vector<double>* phi_;
 
+    std::unique_ptr<std::vector<std::complex<double>>> up_psihat_;
+    std::vector<std::complex<double>>* psihat_;
+
+    std::unique_ptr<std::vector<double>> up_psi_;
+    std::vector<double>* psi_;
+
+    std::unique_ptr<double[]> up_k2cy_;
+    double* k2cy_;
+
     std::unique_ptr<double[]> up_k2_;
     double* k2_;
-    
+
+    std::unique_ptr<double[]> up_k2c_;
+    double* k2c_;
+
     heffte::box3d<>* N;
     std::unique_ptr<heffte::box3d<>> up_N;
 
+    heffte::box3d<>* NDCT;
+    std::unique_ptr<heffte::box3d<>> up_NDCT;
+
     public:
+
     poisson( std::shared_ptr<Field<scalar> > );
     ~poisson();
-    void wavenumbers_();
-    
+    void wavenumbersFFT_();
+    void wavenumbersDCT_();
+    void x_FFT( std::shared_ptr<Field<scalar> > f );    
     void rhs(std::shared_ptr<Field<scalar> > f );
+    void rhsDCT(std::shared_ptr<Field<scalar> > f );
     void solve();
+    void solveDCT();
 };
 
 #endif

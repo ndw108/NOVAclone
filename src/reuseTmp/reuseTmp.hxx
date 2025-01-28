@@ -32,7 +32,8 @@ reuseTmp<T>::reuseTmp
     for( int i=0; i<=20; i++ )
     {
         assert( i!=20 );
-        if( tmp_[i].unique() || tmp_[i] == NULL)
+//        if( tmp_[i].unique() || tmp_[i] == NULL)
+	if( tmp_[i].use_count() == 1 || tmp_[i] == NULL)
         {
             if( tmp_[i] == NULL )
             {
