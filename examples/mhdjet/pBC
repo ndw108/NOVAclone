@@ -1,0 +1,6 @@
+east periodic 1 0 
+west periodic 1 0 
+bottom periodic 0 0 
+top periodic 0 0 
+north periodic 0 0
+south periodic 0 0
